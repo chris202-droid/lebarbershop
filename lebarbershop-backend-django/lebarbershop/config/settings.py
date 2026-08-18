@@ -68,16 +68,34 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
+#DATABASES = {
+#    "default": {
+#        "ENGINE": "django.db.backends.postgresql",
+#        "NAME": os.environ.get("DB_NAME", "lebarbershop"),
+#        "USER": os.environ.get("DB_USER", "lebarbershop"),
+#        "PASSWORD": os.environ.get("DB_PASSWORD", ""),
+#        "HOST": os.environ.get("DB_HOST", "localhost"),
+#        "PORT": os.environ.get("DB_PORT", "5432"),
+#    }
+#}
+
+
+# 1. Clé secrète et mode de débogage
+SECRET_KEY = os.environ.get('SECRET_KEY', 'npg_e5uOFdanC6Jj')
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+
+# 2. Autorisations de domaines
+ALLOWED_HOSTS = ['.vercel.app', 'localhost', '127.0.0.1']
+
+# 3. Configuration de votre base de données Neon
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("DB_NAME", "lebarbershop"),
-        "USER": os.environ.get("DB_USER", "lebarbershop"),
-        "PASSWORD": os.environ.get("DB_PASSWORD", ""),
-        "HOST": os.environ.get("DB_HOST", "localhost"),
-        "PORT": os.environ.get("DB_PORT", "5432"),
-    }
+    'default': dj_database_url.config(
+        default=os.environ.get('POSTGRES_URL', 'postgresql://neondb_owner:npg_e5uOFdanC6Jj@ep-cold-hill-auscy1zk-pooler.c-10.us-east-1.aws.neon.tech/neondb?channel_binding=require&sslmode=require'),
+        conn_max_age=600,
+        ssl_require=True
+    )
 }
+
 
 AUTH_USER_MODEL = "accounts.Utilisateur"
 
