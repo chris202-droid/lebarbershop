@@ -6,7 +6,7 @@
       "use": "@vercel/python"
     },
     {
-      "src": "package.json",
+      "src": "lebarbershop-frontend/lebarbershop-frontend/package.json",
       "use": "@vercel/static-build",
       "config": { "distDir": "build" }
     }
@@ -29,3 +29,4 @@
     }
   ]
 }
+
