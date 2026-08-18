@@ -88,12 +88,23 @@ DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 ALLOWED_HOSTS = ['.vercel.app', 'localhost', '127.0.0.1']
 
 # 3. Configuration de votre base de données Neon
+import os
+import dj_database_url
+
+# Récupération de l'URL (Vercel ou votre chaîne Neon par défaut)
+db_url = os.environ.get('POSTGRES_URL') or 'postgresql://neondb_owner:npg_e5uOFdanC6Jj@ep-cold-hill-auscy1zk-pooler.c-10.us-east-1.aws.neon.tech/neondb?channel_binding=require&sslmode=require'
+
 DATABASES = {
-    'default': dj_database_url.config(
-        default=os.environ.get('POSTGRES_URL', 'postgresql://neondb_owner:npg_e5uOFdanC6Jj@ep-cold-hill-auscy1zk-pooler.c-10.us-east-1.aws.neon.tech/neondb?channel_binding=require&sslmode=require'),
+    'default': dj_database_url.parse(
+        db_url,
         conn_max_age=600,
-        ssl_require=True
+        conn_health_checks=True
     )
+}
+
+# Injection stricte de la configuration SSL requise par Neon pour PostgreSQL
+DATABASES['default']['OPTIONS'] = {
+    'sslmode': 'require',
 }
 
 
