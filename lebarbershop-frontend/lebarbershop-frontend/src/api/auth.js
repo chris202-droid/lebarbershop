@@ -2,7 +2,7 @@ import { api, setTokens, clearTokens } from "../lib/apiClient";
 
 // POST /api/v1/auth/inscription/  (accounts.views.InscriptionView)
 export async function inscrire({ username, first_name, last_name, email, telephone, password, langue_preferee }) {
-  const data = await api.post("/auth/inscription/", {
+  const data = await api.post("https://lebarbershopback.vercel.app/api/v1//auth/inscription/", {
     username, first_name, last_name, email, telephone, password, langue_preferee,
   }, { auth: false });
   setTokens({ access: data.access, refresh: data.refresh });
@@ -11,7 +11,7 @@ export async function inscrire({ username, first_name, last_name, email, telepho
 
 // POST /api/v1/auth/connexion/  (TokenObtainPairView de simplejwt)
 export async function connecter({ username, password }) {
-  const data = await api.post("/auth/connexion/", { username, password }, { auth: false });
+  const data = await api.post("https://lebarbershopback.vercel.app/api/v1/auth/connexion/", { username, password }, { auth: false });
   setTokens({ access: data.access, refresh: data.refresh });
   return data;
 }
