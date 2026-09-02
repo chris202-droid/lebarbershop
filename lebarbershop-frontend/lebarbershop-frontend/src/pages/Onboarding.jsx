@@ -1,13 +1,15 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Store, Check, ArrowRight, ArrowLeft, Plus, X, Smartphone, CreditCard as CardIcon } from "lucide-react";
+import { useNavigate, Link } from "react-router-dom";
+import { Store, Check, ArrowRight, ArrowLeft, Plus, X, Smartphone, CreditCard as CardIcon, Sparkles } from "lucide-react";
 import { T } from "../lib/tokens";
-import { creerSalon } from "../api/salons";
+import { creerSalon, demarrerEssaiGratuit } from "../api/salons";
 import { ajouterEmploye } from "../api/employes";
 import { creerSoin } from "../api/services";
 import { creerAbonnement } from "../api/salons";
 import { initierPaiement } from "../api/paiements";
 import { Erreur } from "../components/UI";
+import SiteFooter from "../components/SiteFooter";
+import BoutonWhatsAppFlottant from "../components/BoutonWhatsAppFlottant";
 
 const ETAPES = ["Le salon", "Employés", "Soins & prix", "Abonnement"];
 const ROLES = ["coiffeur_homme", "coiffeuse_femme", "caissiere", "maquilleuse", "estheticienne", "gestionnaire", "autre"];
@@ -30,6 +32,19 @@ export default function Onboarding() {
 
   const [duree, setDuree] = useState(3);
   const [modePaiement, setModePaiement] = useState(null);
+  const [codePromo, setCodePromo] = useState("");
+  const [modeAbonnement, setModeAbonnement] = useState("essai"); // "essai" | "payant"
+
+  // Essai gratuit : POST /api/v1/abonnements/essai/ — 14 jours, sans paiement ni carte.
+  const demarrerEssai = async () => {
+    setErreur(""); setEnvoi(true);
+    try {
+      await demarrerEssaiGratuit(salonId);
+      navigate("/tableau-de-bord");
+    } catch (err) {
+      setErreur("Erreur lors du démarrage de l'essai gratuit : " + (err.body?.detail || ""));
+    } finally { setEnvoi(false); }
+  };
 
   // Étape 1 : POST /api/v1/salons/  -> crée le salon (statut "en_attente" jusqu'au paiement)
   const validerSalon = async () => {
@@ -74,7 +89,9 @@ export default function Onboarding() {
   const activerSalon = async () => {
     setErreur(""); setEnvoi(true);
     try {
-      const abonnement = await creerAbonnement({ salon: salonId, duree_mois: duree });
+      const abonnement = await creerAbonnement({ // point 1 : code de réduction OU de sponsoring, appliqué au montant final
+        salon: salonId, duree_mois: duree, ...(codePromo ? { code_promo: codePromo } : {}),
+      });
       await initierPaiement({
         abonnement: abonnement.id,
         mode_paiement: modePaiement,
@@ -82,15 +99,20 @@ export default function Onboarding() {
         reference_transaction: `LBS-${Date.now()}`,
       });
       // La confirmation réelle arrive via webhook -> PaiementAbonnementViewSet.confirmer()
-      navigate("/");
+      navigate("/tableau-de-bord");
     } catch (err) {
       setErreur("Erreur lors de l'abonnement : " + (err.body?.detail || ""));
     } finally { setEnvoi(false); }
   };
 
   return (
-    <div className="w-full min-h-screen flex items-start justify-center p-8" style={{ background: T.ink, fontFamily: "Manrope, sans-serif" }}>
+    <div className="w-full min-h-screen flex flex-col" style={{ background: T.ink, fontFamily: "Manrope, sans-serif" }}>
+      <BoutonWhatsAppFlottant />
+      <div className="flex-1 flex items-start justify-center p-8">
       <div className="w-full max-w-xl">
+        <Link to="/" className="flex items-center gap-1.5 text-xs mb-4 w-fit" style={{ color: "rgba(246,239,221,0.5)" }}>
+          <ArrowLeft size={13} /> Accueil
+        </Link>
         <div className="flex items-center gap-2 mb-6">
           <div className="w-8 h-8 rounded-md flex items-center justify-center" style={{ background: T.gold }}>
             <Store size={16} style={{ color: T.inkDeep }} />
@@ -175,24 +197,55 @@ export default function Onboarding() {
 
           {etape === 3 && (
             <div className="space-y-4">
-              <div className="flex gap-2">
-                {[3, 6, 12].map((m) => (
-                  <button key={m} onClick={() => setDuree(m)}
-                    className="flex-1 py-2.5 rounded-md text-sm"
-                    style={{ background: duree === m ? T.gold : "rgba(246,239,221,0.05)", color: duree === m ? T.inkDeep : "rgba(246,239,221,0.7)", border: `1px solid ${duree === m ? T.gold : T.line}` }}>
-                    {m} mois
-                  </button>
-                ))}
+              <div className="grid grid-cols-2 gap-2">
+                <button onClick={() => setModeAbonnement("essai")}
+                  className="text-left p-3 rounded-md"
+                  style={{ background: modeAbonnement === "essai" ? "rgba(127,214,194,0.1)" : "rgba(246,239,221,0.05)", border: `1px solid ${modeAbonnement === "essai" ? T.mint : T.line}` }}>
+                  <div className="flex items-center gap-1.5 mb-1"><Sparkles size={14} style={{ color: T.mint }} /><span className="text-sm font-semibold" style={{ color: T.ivory }}>Essai gratuit</span></div>
+                  <p className="text-xs" style={{ color: "rgba(246,239,221,0.55)" }}>14 jours, sans paiement ni carte bancaire</p>
+                </button>
+                <button onClick={() => setModeAbonnement("payant")}
+                  className="text-left p-3 rounded-md"
+                  style={{ background: modeAbonnement === "payant" ? "rgba(232,184,75,0.1)" : "rgba(246,239,221,0.05)", border: `1px solid ${modeAbonnement === "payant" ? T.gold : T.line}` }}>
+                  <div className="flex items-center gap-1.5 mb-1"><CardIcon size={14} style={{ color: T.gold }} /><span className="text-sm font-semibold" style={{ color: T.ivory }}>Abonnement payant</span></div>
+                  <p className="text-xs" style={{ color: "rgba(246,239,221,0.55)" }}>Dès 1 500 FCFA/mois, minimum 3 mois</p>
+                </button>
               </div>
-              <div className="grid grid-cols-3 gap-2">
-                {[["orange_money", "Orange Money", Smartphone], ["mtn_momo", "MTN MoMo", Smartphone], ["carte_bancaire", "Carte", CardIcon]].map(([k, l, Icon]) => (
-                  <button key={k} onClick={() => setModePaiement(k)}
-                    className="flex flex-col items-center gap-1.5 py-3 rounded-md text-xs"
-                    style={{ background: modePaiement === k ? T.gold : "rgba(246,239,221,0.05)", color: modePaiement === k ? T.inkDeep : "rgba(246,239,221,0.7)", border: `1px solid ${T.line}` }}>
-                    <Icon size={16} /> {l}
-                  </button>
-                ))}
-              </div>
+
+              {modeAbonnement === "essai" && (
+                <div className="rounded-md p-4" style={{ background: "rgba(127,214,194,0.08)", border: `1px solid rgba(127,214,194,0.3)` }}>
+                  <p className="text-sm" style={{ color: T.ivory }}>Testez LeBarberShop pendant 14 jours, gratuitement.</p>
+                  <p className="text-xs mt-1" style={{ color: "rgba(246,239,221,0.55)" }}>
+                    Aucun moyen de paiement requis — vous pourrez souscrire un abonnement payant à tout moment avant la fin de l'essai.
+                  </p>
+                </div>
+              )}
+
+              {modeAbonnement === "payant" && (
+                <>
+                  <div className="flex gap-2">
+                    {[3, 6, 12].map((m) => (
+                      <button key={m} onClick={() => setDuree(m)}
+                        className="flex-1 py-2.5 rounded-md text-sm"
+                        style={{ background: duree === m ? T.gold : "rgba(246,239,221,0.05)", color: duree === m ? T.inkDeep : "rgba(246,239,221,0.7)", border: `1px solid ${duree === m ? T.gold : T.line}` }}>
+                        {m} mois
+                      </button>
+                    ))}
+                  </div>
+                  <div className="grid grid-cols-3 gap-2">
+                    {[["orange_money", "Orange Money", Smartphone], ["mtn_momo", "MTN MoMo", Smartphone], ["carte_bancaire", "Carte", CardIcon]].map(([k, l, Icon]) => (
+                      <button key={k} onClick={() => setModePaiement(k)}
+                        className="flex flex-col items-center gap-1.5 py-3 rounded-md text-xs"
+                        style={{ background: modePaiement === k ? T.gold : "rgba(246,239,221,0.05)", color: modePaiement === k ? T.inkDeep : "rgba(246,239,221,0.7)", border: `1px solid ${T.line}` }}>
+                        <Icon size={16} /> {l}
+                      </button>
+                    ))}
+                  </div>
+                  <input value={codePromo} onChange={(e) => setCodePromo(e.target.value.toUpperCase())}
+                    placeholder="Code de réduction ou de parrainage (optionnel)"
+                    className="w-full px-3 py-2.5 rounded-md text-sm outline-none" style={{ background: "rgba(246,239,221,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
+                </>
+              )}
             </div>
           )}
         </div>
@@ -205,9 +258,21 @@ export default function Onboarding() {
           {etape === 0 && <button onClick={validerSalon} disabled={envoi} className="flex items-center gap-1.5 px-5 py-2.5 rounded-md text-sm font-semibold" style={{ background: T.gold, color: T.inkDeep, opacity: envoi ? 0.6 : 1 }}>Continuer <ArrowRight size={15} /></button>}
           {etape === 1 && <button onClick={enregistrerEmployes} disabled={envoi} className="flex items-center gap-1.5 px-5 py-2.5 rounded-md text-sm font-semibold" style={{ background: T.gold, color: T.inkDeep, opacity: envoi ? 0.6 : 1 }}>Continuer <ArrowRight size={15} /></button>}
           {etape === 2 && <button onClick={enregistrerSoins} disabled={envoi} className="flex items-center gap-1.5 px-5 py-2.5 rounded-md text-sm font-semibold" style={{ background: T.gold, color: T.inkDeep, opacity: envoi ? 0.6 : 1 }}>Continuer <ArrowRight size={15} /></button>}
-          {etape === 3 && <button onClick={activerSalon} disabled={envoi || !modePaiement} className="flex items-center gap-1.5 px-5 py-2.5 rounded-md text-sm font-semibold" style={{ background: T.mint, color: T.inkDeep, opacity: (envoi || !modePaiement) ? 0.5 : 1 }}><Check size={15} /> Payer et activer</button>}
+          {etape === 3 && modeAbonnement === "essai" && (
+            <button onClick={demarrerEssai} disabled={envoi} className="flex items-center gap-1.5 px-5 py-2.5 rounded-md text-sm font-semibold" style={{ background: T.mint, color: T.inkDeep, opacity: envoi ? 0.6 : 1 }}>
+              <Sparkles size={15} /> Démarrer l'essai gratuit
+            </button>
+          )}
+          {etape === 3 && modeAbonnement === "payant" && (
+            <button onClick={activerSalon} disabled={envoi || !modePaiement} className="flex items-center gap-1.5 px-5 py-2.5 rounded-md text-sm font-semibold" style={{ background: T.gold, color: T.inkDeep, opacity: (envoi || !modePaiement) ? 0.5 : 1 }}>
+              <Check size={15} /> Payer et activer
+            </button>
+          )}
         </div>
       </div>
+      </div>
+
+      <SiteFooter compact />
     </div>
   );
 }

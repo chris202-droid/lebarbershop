@@ -36,9 +36,37 @@ class Utilisateur(AbstractUser):
     est_admin_principal = models.BooleanField(default=False)
     est_admin_secondaire = models.BooleanField(default=False)
 
+    mot_de_passe_temporaire = models.BooleanField(
+        default=False,
+        help_text="Vrai quand le compte a été créé par un gestionnaire pour un employé : "
+                   "l'utilisateur doit changer son mot de passe à sa première connexion."
+    )
+    a_utilise_essai_gratuit = models.BooleanField(
+        default=False,
+        help_text="Un utilisateur ne peut bénéficier de l'essai gratuit de 14 jours que sur "
+                   "le tout premier salon qu'il crée, même s'il crée ensuite d'autres salons."
+    )
+    photo_url = models.URLField(
+        blank=True, null=True,
+        help_text="Photo de profil. Stockée en tant qu'URL (voir README pour le stockage objet à brancher)."
+    )
+
     date_creation = models.DateTimeField(auto_now_add=True)
 
     USERNAME_FIELD = "username"
+
+    def save(self, *args, **kwargs):
+        # Un compte rendu super-utilisateur Django (via `createsuperuser` ou
+        # directement depuis le Django admin, comme observé lors des tests)
+        # doit automatiquement avoir accès à l'espace super administrateur du
+        # SAAS. Sans cette synchronisation, `is_superuser=True` donne accès
+        # au Django admin mais PAS aux endpoints de l'API (qui vérifient
+        # `est_admin_principal`/`est_admin_secondaire`, jamais `is_superuser`
+        # directement) : symptôme exact observé — listes de salons, codes
+        # promo et administrateurs invisibles ou en erreur pour ce compte.
+        if self.is_superuser:
+            self.est_admin_principal = True
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.get_full_name() or self.username

@@ -6,9 +6,18 @@ from apps.tickets.models import Ticket
 
 class Produit(models.Model):
     """Produit acheté et utilisé par le salon (consommables coiffure/esthétique)."""
+
+    class Categorie(models.TextChoices):
+        MATERIEL = "materiel", "Matériel"
+        PRODUIT_HOMME = "produit_homme", "Produit homme"
+        PRODUIT_FEMME = "produit_femme", "Produit femme"
+        ESTHETIQUE = "esthetique", "Esthétique"
+        AUTRE = "autre", "Autre"
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     salon = models.ForeignKey(Salon, on_delete=models.CASCADE, related_name="produits")
     nom = models.CharField(max_length=150)
+    categorie = models.CharField(max_length=20, choices=Categorie.choices, default=Categorie.AUTRE)
     quantite_stock = models.PositiveIntegerField(default=0)
     seuil_alerte = models.PositiveIntegerField(
         default=5, help_text="En dessous de ce seuil, une alerte de rupture est envoyée."

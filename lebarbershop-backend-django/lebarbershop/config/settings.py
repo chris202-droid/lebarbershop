@@ -72,10 +72,10 @@ WSGI_APPLICATION = "config.wsgi.application"
 #    "default": {
 #        "ENGINE": "django.db.backends.postgresql",
 #        "NAME": os.environ.get("DB_NAME", "lebarbershop"),
-#        "USER": os.environ.get("DB_USER", "lebarbershop"),
+#        "USER": os.environ.get("DB_USER", "root"),
 #        "PASSWORD": os.environ.get("DB_PASSWORD", ""),
 #        "HOST": os.environ.get("DB_HOST", "localhost"),
-#        "PORT": os.environ.get("DB_PORT", "5432"),
+#        "PORT": os.environ.get("DB_PORT", ""),
 #    }
 #}
 
@@ -92,31 +92,57 @@ import os
 from urllib.parse import urlparse
 
 # 1. Récupération de l'URL Neon (Vercel ou chaîne brute par défaut)
-db_url = os.environ.get('POSTGRES_URL') or 'postgresql://neondb_owner:npg_e5uOFdanC6Jj@ep-cold-hill-auscy1zk-pooler.c-10.us-east-1.aws.neon.tech/neondb?channel_binding=require&sslmode=require'
+ 
+
+db_url = os.environ.get('POSTGRES_URL')
 
 # 2. Découpage manuel de l'URL avec les outils natifs de Python
-url = urlparse(db_url)
 
-DATABASES = {
+if db_url:
+    url = urlparse(db_url)
+    DATABASES = {
+        'default': {
+                'ENGINE': 'django.contrib.gis.db.backends.postgis',
+                'NAME': url.path[1:],
+                'USER': url.username,
+                'PASSWORD':  url.password,
+                'HOST': url.hostname,
+                'PORT': url.port or 543,
+                'OPTIONS':{
+                    'charset':'utf8',
+                    'init_command':"SET sql_mode = 'STRICT_TRANS_TABLES' ",
+                    'sslmode':'require'
+                },
+            }
+    }
+else:
+    DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': url.path[1:],         # Enlève le '/' initial pour avoir le nom de la BD
-        'USER': url.username,
-        'PASSWORD': url.password,
-        'HOST': url.hostname,
-        'PORT': url.port or 5432,
-        'CONN_MAX_AGE': 600,
-        'OPTIONS': {
-            'sslmode': 'require',     # Obligatoire pour Neon
-        }
+        'ENGINE': 'django.contrib.gis.db.backends.mysql',
+        'NAME': 'lebarbershop',
+        'USER': 'root',
+        'PASSWORD':  '',
+        'HOST': 'localhost',
+        'PORT': 3308,
+        'OPTIONS':{
+            'charset':'utf8',
+            'init_command':"SET sql_mode = 'STRICT_TRANS_TABLES' ",
+        },
     }
 }
 
 
+#supprimer
+GDAL_LIBRARY_PATH = r'D:\kalarai\vkalarai\Lib\site-packages\osgeo\gdal304.dll'
+GEOS_LIBRARY_PATH = r'D:\kalarai\vkalarai\Lib\site-packages\osgeo\geos_c.dll'
+#FIN
+
+
+
 # Injection stricte de la configuration SSL requise par Neon pour PostgreSQL
-DATABASES['default']['OPTIONS'] = {
-    'sslmode': 'require',
-}
+#DATABASES['default']['OPTIONS'] = {
+#    'sslmode': 'require',
+#}
 
 
 AUTH_USER_MODEL = "accounts.Utilisateur"
@@ -173,11 +199,11 @@ SESSION_COOKIE_SAMESITE = "Lax"
 CSRF_COOKIE_SAMESITE = "Lax"
 SESSION_COOKIE_SECURE = not DEBUG          # cookies uniquement en HTTPS en prod (anti session hijacking)
 CSRF_COOKIE_SECURE = not DEBUG
-SECURE_SSL_REDIRECT = not DEBUG
+#SECURE_SSL_REDIRECT = not DEBUG
 SECURE_HSTS_SECONDS = 31536000 if not DEBUG else 0
 SECURE_HSTS_INCLUDE_SUBDOMAINS = not DEBUG
 
 CORS_ALLOWED_ORIGINS = os.environ.get(
-    "CORS_ALLOWED_ORIGINS", "http://localhost:3000,http://localhost:5173"
+    "CORS_ALLOWED_ORIGINS", "https://www.lebarbershopback.vercel.app,https://www.lebarbershop.org"
 ).split(",")
 CORS_ALLOW_CREDENTIALS = True

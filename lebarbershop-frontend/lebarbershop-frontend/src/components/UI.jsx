@@ -28,10 +28,11 @@ export function StatCard({ label, value, sub, trend, icon: Icon }) {
   );
 }
 
-export function TicketStub({ ticket, onValider }) {
+export function TicketStub({ ticket, onValider, onAnnuler }) {
   const valide = ticket.statut === "valide";
+  const annule = ticket.statut === "annule";
   return (
-    <div className="relative flex items-stretch rounded-[2px] overflow-hidden" style={{ background: "rgba(246,239,221,0.05)", border: `1px solid ${T.line}` }}>
+    <div className="relative flex items-stretch rounded-[2px] overflow-hidden" style={{ background: "rgba(246,239,221,0.05)", border: `1px solid ${T.line}`, opacity: annule ? 0.5 : 1 }}>
       <div className="flex flex-col justify-around py-1">
         {Array.from({ length: 8 }).map((_, i) => (
           <span key={i} className="block w-1.5 h-1.5 rounded-full mx-[3px]" style={{ background: T.inkDeep }} />
@@ -42,8 +43,11 @@ export function TicketStub({ ticket, onValider }) {
           <div className="flex items-center gap-2">
             <span className="font-mono text-[11px]" style={{ color: T.gold }}>{String(ticket.id).slice(0, 8)}</span>
             <span className="text-[10px] uppercase tracking-widest px-1.5 py-0.5 rounded-sm"
-              style={{ background: valide ? "rgba(127,214,194,0.15)" : "rgba(232,184,75,0.15)", color: valide ? T.mint : T.gold }}>
-              {valide ? "Validé" : "En attente"}
+              style={{
+                background: valide ? "rgba(127,214,194,0.15)" : annule ? "rgba(255,122,92,0.15)" : "rgba(232,184,75,0.15)",
+                color: valide ? T.mint : annule ? T.coral : T.gold,
+              }}>
+              {valide ? "Validé" : annule ? "Annulé" : "En attente"}
             </span>
           </div>
           <p className="mt-1 truncate" style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.ivory }}>
@@ -56,10 +60,19 @@ export function TicketStub({ ticket, onValider }) {
         <div className="text-right shrink-0">
           <p className="font-mono text-lg" style={{ color: T.ivory }}>{Number(ticket.montant_net || 0).toLocaleString()}</p>
           <p className="text-[10px] tracking-wide" style={{ color: "rgba(246,239,221,0.4)" }}>FCFA</p>
-          {!valide && onValider && (
-            <button onClick={() => onValider(ticket)} className="mt-1 text-[11px] px-2 py-1 rounded-full" style={{ background: T.gold, color: T.inkDeep }}>
-              Valider
-            </button>
+          {!valide && !annule && (
+            <div className="flex items-center gap-1.5 mt-1 justify-end">
+              {onValider && (
+                <button onClick={() => onValider(ticket)} className="text-[11px] px-2 py-1 rounded-full" style={{ background: T.gold, color: T.inkDeep }}>
+                  Valider
+                </button>
+              )}
+              {onAnnuler && (
+                <button onClick={() => onAnnuler(ticket)} className="text-[11px] px-2 py-1 rounded-full" style={{ background: "rgba(255,122,92,0.15)", color: T.coral }}>
+                  Annuler
+                </button>
+              )}
+            </div>
           )}
         </div>
       </div>

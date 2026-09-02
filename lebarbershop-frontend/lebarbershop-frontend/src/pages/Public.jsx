@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Scissors, Search, Star, MapPin, Lock, TrendingUp, CheckCircle2, Sparkles, ArrowRight } from "lucide-react";
+import { useLocation } from "react-router-dom";
+import { Search, Star, MapPin, Lock, TrendingUp, CheckCircle2, Sparkles, ArrowRight } from "lucide-react";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 import { T } from "../lib/tokens";
 import { useAuth } from "../context/AuthContext";
 import { Erreur } from "../components/UI";
 import { listerSalons, souscrireAnalyseSectorielle } from "../api/salons";
 import { statistiquesSecteurs } from "../api/analytics";
+import SiteHeader from "../components/SiteHeader";
+import SiteFooter from "../components/SiteFooter";
+import BoutonWhatsAppFlottant from "../components/BoutonWhatsAppFlottant";
 
 function Stars({ note }) {
   return <div className="flex items-center gap-0.5">{Array.from({ length: 5 }).map((_, i) => <Star key={i} size={12} fill={i < Math.round(note || 0) ? T.gold : "none"} style={{ color: T.gold }} />)}</div>;
@@ -13,11 +17,18 @@ function Stars({ note }) {
 
 export default function Public() {
   const { utilisateur } = useAuth();
+  const location = useLocation();
   const [salons, setSalons] = useState([]);
   const [secteurs, setSecteurs] = useState([]);
   const [recherche, setRecherche] = useState("");
   const [erreur, setErreur] = useState("");
   const [debloque, setDebloque] = useState(false);
+
+  useEffect(() => {
+    if (!location.hash) return;
+    const cible = document.querySelector(location.hash);
+    if (cible) cible.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [location.hash]);
 
   useEffect(() => {
     (async () => {
@@ -46,12 +57,8 @@ export default function Public() {
 
   return (
     <div className="w-full min-h-screen" style={{ background: T.ink, fontFamily: "Manrope, sans-serif" }}>
-      <header className="flex items-center justify-between px-6 py-4" style={{ borderBottom: `1px solid ${T.line}` }}>
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-md flex items-center justify-center" style={{ background: T.gold }}><Scissors size={16} style={{ color: T.inkDeep }} /></div>
-          <span style={{ fontFamily: "Fraunces, serif", fontSize: 17, color: T.ivory }}>LeBarberShop</span>
-        </div>
-      </header>
+      <BoutonWhatsAppFlottant />
+      <SiteHeader />
 
       <div className="px-6 py-6 max-w-5xl mx-auto space-y-10">
         <Erreur message={erreur} />
@@ -76,7 +83,7 @@ export default function Public() {
           </div>
         </section>
 
-        <section>
+        <section id="analyse" className="scroll-mt-20">
           <div className="flex items-center gap-2 mb-1"><Sparkles size={17} style={{ color: T.gold }} /><h2 style={{ fontFamily: "Fraunces, serif", fontSize: 20, color: T.ivory }}>Analyse sectorielle</h2></div>
           <p className="text-sm mb-5" style={{ color: "rgba(246,239,221,0.55)" }}>Identifiez où ouvrir votre prochain salon.</p>
 
@@ -119,6 +126,8 @@ export default function Public() {
           )}
         </section>
       </div>
+
+      <SiteFooter />
     </div>
   );
 }

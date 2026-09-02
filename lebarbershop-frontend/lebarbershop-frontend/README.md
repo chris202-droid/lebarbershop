@@ -67,15 +67,75 @@ disponible via `useAuth()` dans toute l'application (nom, rôle
 
 ### 2.5 Pages ↔ endpoints (résumé)
 
-| Page                          | Route front   | Principaux appels API                                                        |
-|--------------------------------|----------------|--------------------------------------------------------------------------------|
-| `pages/Connexion.jsx`          | `/connexion`   | `POST /auth/connexion/`                                                       |
-| `pages/Inscription.jsx`        | `/inscription` | `POST /auth/inscription/`                                                     |
-| `pages/Onboarding.jsx`         | `/onboarding`  | `POST /salons/`, `POST /employes/`, `POST /soins/`, `POST /abonnements/`, `POST /paiements/` |
-| `pages/DashboardSalon.jsx`     | `/`            | `GET /salons/`, `GET /tickets/`, `GET /produits/`, `GET /bilans-journaliers/`, `POST /tickets/{id}/valider/` |
-| `pages/Caisse.jsx`             | `/caisse`      | `GET /tickets/?statut=en_attente`, `POST /tickets/{id}/valider/`             |
-| `pages/Admin.jsx`              | `/admin`       | `GET /salons/`, `GET/POST /codes-reduction/`, `GET/POST /codes-sponsoring/`, `GET /statistiques-secteurs/` |
-| `pages/Public.jsx`             | `/salons`      | `GET /salons/`, `POST /analyses-sectorielles/`, `GET /statistiques-secteurs/` |
+| Page                          | Route front         | Principaux appels API                                                        |
+|--------------------------------|-----------------------|--------------------------------------------------------------------------------|
+| `pages/Accueil.jsx`            | `/`                   | Aucun (page vitrine statique — voir §2.7)                                     |
+| `pages/Connexion.jsx`          | `/connexion`          | `POST /auth/connexion/`                                                       |
+| `pages/Inscription.jsx`        | `/inscription`        | `POST /auth/inscription/`                                                     |
+| `pages/Onboarding.jsx`         | `/onboarding`         | `POST /salons/`, `POST /employes/`, `POST /soins/`, `POST /abonnements/`, `POST /paiements/` |
+| `pages/DashboardSalon.jsx`     | `/tableau-de-bord`    | `GET /salons/`, `GET /tickets/`, `GET /produits/`, `GET /bilans-journaliers/`, `POST /tickets/{id}/valider/` |
+| `pages/Caisse.jsx`             | `/caisse`             | `GET /tickets/?statut=en_attente`, `POST /tickets/{id}/valider/`             |
+| `pages/Admin.jsx`              | `/admin`              | `GET /salons/`, `GET/POST /codes-reduction/`, `GET/POST /codes-sponsoring/`, `GET /statistiques-secteurs/` |
+| `pages/Public.jsx`             | `/salons`             | `GET /salons/`, `POST /analyses-sectorielles/`, `GET /statistiques-secteurs/` |
+
+> Le tableau de bord salon a été déplacé de `/` vers `/tableau-de-bord` pour
+> laisser la racine `/` à la page d'accueil publique.
+
+### 2.6bis Navigation partagée — `components/SiteHeader.jsx`, `SiteFooter.jsx`, `BoutonWhatsAppFlottant.jsx`
+
+Trois composants transverses, montés sur **toutes** les pages (publiques et
+applicatives) :
+
+- **`SiteHeader`** — logo cliquable vers `/`, liens de navigation (routes et
+  ancres de la landing), mis en valeur (couleur or + gras) selon la route ou
+  l'ancre courante via `useLocation()`. Depuis n'importe quelle page, cliquer
+  sur un lien d'ancre (ex. « Nos forfaits ») navigue vers `/#forfaits` ; la
+  page `Accueil.jsx` défile ensuite automatiquement jusqu'à la section grâce
+  à un `useEffect` sur `location.hash`. Utilisé sur `Accueil`, `Connexion`,
+  `Inscription`, `Public`.
+- **`SiteFooter`** — présent sur **toutes** les pages, y compris les écrans
+  applicatifs (`DashboardSalon`, `Caisse`, `Admin`, `Onboarding`) en variante
+  `compact` (padding réduit, ligne d'accroche masquée) pour ne pas alourdir
+  des interfaces déjà denses. Contient les liens Accueil, Nos forfaits,
+  Devenir partenaire, Code promo, **Nous contacter**, Trouver un salon, ainsi
+  que la signature « Powered by KALARAI ».
+- **`BoutonWhatsAppFlottant`** — bouton flottant bas-droite, présent sur
+  toutes les pages, lien direct vers `wa.me/237671729822`.
+
+Sur les écrans applicatifs à sidebar (`DashboardSalon`, `Caisse`, `Admin`,
+`Onboarding`), le logo/bloc de marque en haut de la sidebar est désormais un
+`<Link to="/">` : possibilité de revenir à l'accueil à tout moment, en plus
+du `SiteFooter` en bas de page. La structure de ces pages est passée de
+`flex h-screen` (sidebar + contenu, sans défilement de page) à
+`flex flex-col` avec un bloc interne `flex-1 flex min-h-0` pour la sidebar et
+le contenu défilant, suivi du `SiteFooter` — la zone de contenu principale
+garde son propre `overflow-auto` interne, seul le pied de page ajoute un
+niveau de défilement de page supplémentaire.
+
+### 2.7 Page d'accueil — `pages/Accueil.jsx`
+
+Landing page publique (inspirée de la structure d'un site comme campay.net :
+en-tête sticky, hero, sections ancrées, footer) avec les rubriques demandées
+dans le cahier des charges :
+
+- **Qui sommes-nous** — présentation de la plateforme.
+- **Nos forfaits** — reprend exactement les tarifs définis côté backend :
+  1500 FCFA/mois (1er abonnement, 4500 FCFA sur 3 mois), 1800 FCFA/mois au
+  renouvellement, et les deux abonnements d'analyse sectorielle (20 000 et
+  25 000 FCFA) avec renvoi vers `/salons#analyse` pour souscrire réellement.
+- **Devenir partenaire** — formulaire branché sur `POST /api/v1/contact/partenariats/`.
+- **Obtenir un code promo** — formulaire branché sur `POST /api/v1/contact/code-promo/` ;
+  le code généré (10 %, valable 30 jours, usage unique) est affiché
+  immédiatement dans l'interface, aucun envoi d'email n'étant configuré côté
+  backend à ce stade.
+- **Nous contacter** — formulaire branché sur `POST /api/v1/contact/demandes/`.
+
+Ces trois formulaires utilisent `src/api/contact.js` (endpoints publics,
+`auth: false`, throttlés côté Django contre le spam). Les demandes de
+partenariat et de contact atterrissent dans le Django admin
+(`DemandeContact`, `DemandePartenariat`) pour traitement manuel ; convertir
+une demande de partenariat en `CodeSponsoring` reste une action manuelle de
+l'administrateur pour l'instant.
 
 ### 2.6 Ce qui reste à brancher pour la production
 

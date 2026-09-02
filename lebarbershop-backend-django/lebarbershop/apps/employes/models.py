@@ -27,6 +27,17 @@ class Employe(models.Model):
     actif = models.BooleanField(default=True)
     date_embauche = models.DateField(auto_now_add=True)
 
+    # Permissions granulaires sur le cycle de vie des tickets (point 4) :
+    # un manager peut désigner un autre manager (co-gestionnaire) et lui
+    # retirer certaines capacités, plutôt que de tout lui accorder par
+    # défaut. Ces champs s'appliquent à tous les rôles pour rester simples,
+    # mais ne sont exposés à l'édition côté frontend que pour les employés
+    # ayant le rôle "gestionnaire" — le propriétaire réel du salon n'est lui
+    # jamais restreint par ces indicateurs (voir apps/tickets/views.py).
+    peut_creer_ticket = models.BooleanField(default=True)
+    peut_confirmer_ticket = models.BooleanField(default=True)
+    peut_valider_ticket = models.BooleanField(default=True)
+
     class Meta:
         unique_together = ("utilisateur", "salon")
 

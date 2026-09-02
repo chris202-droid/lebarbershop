@@ -12,6 +12,9 @@ class ProduitViewSet(viewsets.ModelViewSet):
         salon_id = self.request.query_params.get("salon")
         if salon_id:
             qs = qs.filter(salon_id=salon_id)
+        categorie = self.request.query_params.get("categorie")
+        if categorie:
+            qs = qs.filter(categorie=categorie)
         en_alerte = self.request.query_params.get("en_alerte")
         if en_alerte == "true":
             from django.db.models import F

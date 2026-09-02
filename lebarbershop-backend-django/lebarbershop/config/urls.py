@@ -14,4 +14,5 @@ urlpatterns = [
     path("api/v1/", include("apps.geolocalisation.urls")),
     path("api/v1/", include("apps.analytics.urls")),
     path("api/v1/", include("apps.paiements.urls")),
+    path("api/v1/", include("apps.contact.urls")),
 ]
