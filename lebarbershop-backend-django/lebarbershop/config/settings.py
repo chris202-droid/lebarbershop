@@ -85,7 +85,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'npg_e5uOFdanC6Jj')
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 # 2. Autorisations de domaines
-ALLOWED_HOSTS = ['https://lebarbershop.org', 'https://lebarbershopback.vercel.app', '127.0.0.1t']
+ALLOWED_HOSTS = ['https://lebarbershop.org', 'https://lebarbershopback.vercel.app', '127.0.0.1']
 
 # 3. Configuration de votre base de données Neon
 import os
