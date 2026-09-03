@@ -204,6 +204,6 @@ SECURE_HSTS_SECONDS = 31536000 if not DEBUG else 0
 SECURE_HSTS_INCLUDE_SUBDOMAINS = not DEBUG
 
 CORS_ALLOWED_ORIGINS = os.environ.get(
-    "CORS_ALLOWED_ORIGINS", "https://www.lebarbershopback.vercel.app,https://www.lebarbershop.org"
+    "CORS_ALLOWED_ORIGINS", "https://lebarbershopback.vercel.app,https://lebarbershop.org"
 ).split(",")
 CORS_ALLOW_CREDENTIALS = True
