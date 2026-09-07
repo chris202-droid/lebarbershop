@@ -21,6 +21,11 @@ export const listerAbonnements = (salonId) => api.get(`/abonnements/?salon=${sal
 export const listerTousLesAbonnements = () => api.get("/abonnements/");
 export const creerAbonnement = (payload) => api.post("/abonnements/", payload);
 
+// POST /api/v1/abonnements/apercu/ — calcule instantanément prix normal,
+// réduction et prix final SANS créer d'abonnement (affichage en direct
+// pendant la saisie du code promo / le choix de la durée).
+export const apercuAbonnement = (payload) => api.post("/abonnements/apercu/", payload);
+
 // /api/v1/codes-reduction/ et /api/v1/codes-sponsoring/ (admin principal uniquement)
 export const listerCodesReduction = () => api.get("/codes-reduction/");
 export const creerCodeReduction = (payload) => api.post("/codes-reduction/", payload);

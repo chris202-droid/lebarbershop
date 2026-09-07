@@ -11,7 +11,7 @@ export const envoyerDemandePartenariat = (payload) =>
   api.post("/contact/partenariats/", payload, { auth: false });
 
 // POST /api/v1/contact/code-promo/  (apps/contact/views.py::DemandeCodePromoView)
-// Renvoie immédiatement { code, pourcentage_reduction, date_expiration, ... }
+// Renvoie immédiatement { code, montant_reduction, date_expiration, ... }
 export const demanderCodePromo = (email) =>
   api.post("/contact/code-promo/", { email }, { auth: false });
 

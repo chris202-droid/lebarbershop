@@ -9,33 +9,41 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "changez-moi-en-production")
 DEBUG = os.environ.get("DJANGO_DEBUG", "True") == "True"
+# En production (Vercel) : définir DJANGO_ALLOWED_HOSTS avec le domaine exact
+# du backend, ex. "votre-backend-xxxx.vercel.app" — voir Vercel → Settings →
+# Environment Variables du projet backend.
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "*").split(",")
+
+#supprimer
+GDAL_LIBRARY_PATH = r'D:\kalarai\vkalarai\Lib\site-packages\osgeo\gdal304.dll'
+GEOS_LIBRARY_PATH = r'D:\kalarai\vkalarai\Lib\site-packages\osgeo\geos_c.dll'
+#FIN
 
 INSTALLED_APPS = [
     "django.contrib.admin",
-        "django.contrib.auth",
-        "django.contrib.contenttypes",
-        "django.contrib.sessions",
-        "django.contrib.messages",
-        "django.contrib.staticfiles",
-    
-        "rest_framework",
-        "rest_framework_simplejwt",
-        "corsheaders",
-        "django_filters",
-    
-        "apps.accounts",
-        "apps.salons",
-        "apps.employes",
-        "apps.services",
-        "apps.clients",
-        "apps.tickets",
-        "apps.stocks",
-        "apps.avis",
-        "apps.geolocalisation",
-        "apps.analytics",
-        "apps.paiements",
-        "apps.contact",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+
+    "rest_framework",
+    "rest_framework_simplejwt",
+    "corsheaders",
+    "django_filters",
+
+    "apps.accounts",
+    "apps.salons",
+    "apps.employes",
+    "apps.services",
+    "apps.clients",
+    "apps.tickets",
+    "apps.stocks",
+    "apps.avis",
+    "apps.geolocalisation",
+    "apps.analytics",
+    "apps.paiements",
+    "apps.contact",
 ]
 
 MIDDLEWARE = [
@@ -69,30 +77,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-#DATABASES = {
-#    "default": {
-#        "ENGINE": "django.db.backends.postgresql",
-#        "NAME": os.environ.get("DB_NAME", "lebarbershop"),
-#        "USER": os.environ.get("DB_USER", "root"),
-#        "PASSWORD": os.environ.get("DB_PASSWORD", ""),
-#        "HOST": os.environ.get("DB_HOST", "localhost"),
-#        "PORT": os.environ.get("DB_PORT", ""),
-#    }
-#}
-
-
-# 1. Clé secrète et mode de débogage
-SECRET_KEY = os.environ.get('SECRET_KEY', 'npg_e5uOFdanC6Jj')
-DEBUG = os.environ.get('DEBUG', 'True') == 'True'
-
-# 2. Autorisations de domaines
-
-ALLOWED_HOSTS = ['*.vercel.app', 'lebarbershop.org', '127.0.0.1']
-
-ALLOWED_HOSTS = ['https://lebarbershop.org', 'https://lebarbershopback.vercel.app', '127.0.0.1']
-
-
-# 3. Configuration de votre base de données Neon
 import os
 from urllib.parse import urlparse
 
@@ -135,19 +119,6 @@ else:
         },
     }
 }
-
-
-#supprimer
-GDAL_LIBRARY_PATH = r'D:\kalarai\vkalarai\Lib\site-packages\osgeo\gdal304.dll'
-GEOS_LIBRARY_PATH = r'D:\kalarai\vkalarai\Lib\site-packages\osgeo\geos_c.dll'
-#FIN
-
-
-
-# Injection stricte de la configuration SSL requise par Neon pour PostgreSQL
-#DATABASES['default']['OPTIONS'] = {
-#    'sslmode': 'require',
-#}
 
 
 AUTH_USER_MODEL = "accounts.Utilisateur"
@@ -204,11 +175,38 @@ SESSION_COOKIE_SAMESITE = "Lax"
 CSRF_COOKIE_SAMESITE = "Lax"
 SESSION_COOKIE_SECURE = not DEBUG          # cookies uniquement en HTTPS en prod (anti session hijacking)
 CSRF_COOKIE_SECURE = not DEBUG
-#SECURE_SSL_REDIRECT = not DEBUG
+SECURE_SSL_REDIRECT = not DEBUG
+# Vercel termine le HTTPS en amont (proxy) : sans cette ligne, Django voit une
+# requête HTTP "interne" et SECURE_SSL_REDIRECT déclenche une boucle infinie
+# de redirection. Cette ligne indique à Django de faire confiance à l'en-tête
+# X-Forwarded-Proto envoyé par le proxy Vercel pour savoir si la requête
+# d'origine était bien en HTTPS.
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SECURE_HSTS_SECONDS = 31536000 if not DEBUG else 0
 SECURE_HSTS_INCLUDE_SUBDOMAINS = not DEBUG
 
+# En production : définir CORS_ALLOWED_ORIGINS avec le(s) domaine(s) exact(s)
+# du frontend, ex. "https://lebarshop.org,https://www.lebarshop.org"
+# (schéma https:// obligatoire, sans slash final) — voir Vercel → Settings →
+# Environment Variables du projet backend.
 CORS_ALLOWED_ORIGINS = os.environ.get(
-    "CORS_ALLOWED_ORIGINS", "https://lebarbershopback.vercel.app,https://lebarbershop.org"
+    "CORS_ALLOWED_ORIGINS", "http://localhost:8000,http://localhost:5173,http://127.0.0.1:5173"
 ).split(",")
 CORS_ALLOW_CREDENTIALS = True
+
+# --- Email (notifications des formulaires publics : contact, partenariat) ---
+# En développement (aucune variable EMAIL_HOST définie), les emails sont
+# affichés dans la console au lieu d'être réellement envoyés.
+EMAIL_BACKEND = os.environ.get(
+    "DJANGO_EMAIL_BACKEND",
+    "django.core.mail.backends.console.EmailBackend" if DEBUG else "django.core.mail.backends.smtp.EmailBackend",
+)
+EMAIL_HOST = os.environ.get("EMAIL_HOST", "")
+EMAIL_PORT = int(os.environ.get("EMAIL_PORT", "587"))
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
+EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "True") == "True"
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "no-reply@lebarbershop.org")
+
+# Boîte de réception des formulaires publics (contact, partenariat)
+CONTACT_EMAIL_DESTINATAIRE = os.environ.get("CONTACT_EMAIL_DESTINATAIRE", "information@kalarai.com")

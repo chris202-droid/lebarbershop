@@ -93,9 +93,9 @@ class AbonnementSerializer(serializers.ModelSerializer):
         validated_data["code_sponsoring"] = code_sponsoring
 
         if code_reduction:
-            montant = max(montant - code_reduction.montant_reduction, 0)
+            montant = max(montant - code_reduction.montant_reduction * validated_data["duree_mois"], 0)
         if code_sponsoring and code_sponsoring.montant_reduction_utilisateur:
-            montant = max(montant - code_sponsoring.montant_reduction_utilisateur, 0)
+            montant = max(montant - code_sponsoring.montant_reduction_utilisateur * validated_data["duree_mois"], 0)
 
         validated_data["montant_total"] = montant
         abonnement = super().create(validated_data)

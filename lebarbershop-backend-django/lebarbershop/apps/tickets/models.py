@@ -44,9 +44,9 @@ class Ticket(models.Model):
     statut = models.CharField(max_length=20, choices=Statut.choices, default=Statut.EN_ATTENTE)
     mode_paiement = models.CharField(max_length=20, choices=ModePaiement.choices, blank=True, null=True)
 
-    reduction_pourcentage = models.IntegerField(default=0)
-    montant_brut = models.IntegerField(default=0)
-    montant_net = models.IntegerField(default=0)
+    reduction_pourcentage = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    montant_brut = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    montant_net = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     date_creation = models.DateTimeField(auto_now_add=True)
     date_validation = models.DateTimeField(null=True, blank=True)
@@ -59,7 +59,7 @@ class Ticket(models.Model):
         # présenté / a annulé le soin) ne comptent pas dans le total.
         total = sum(l.prix for l in self.lignes.exclude(statut=LigneTicket.Statut.ANNULE))
         self.montant_brut = total
-        self.montant_net = total  - self.reduction_pourcentage 
+        self.montant_net = total * (1 - self.reduction_pourcentage / 100)
 
     def generer_nom_client_defaut(self):
         """
@@ -87,7 +87,7 @@ class LigneTicket(models.Model):
     employe_executant = models.ForeignKey(
         Employe, on_delete=models.PROTECT, related_name="soins_a_executer"
     )
-    prix = models.IntegerField(default=0)
+    prix = models.DecimalField(max_digits=10, decimal_places=2)
     statut = models.CharField(max_length=20, choices=Statut.choices, default=Statut.EN_ATTENTE)
 
     def __str__(self):

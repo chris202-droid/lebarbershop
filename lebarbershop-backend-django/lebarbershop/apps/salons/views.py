@@ -136,6 +136,85 @@ class AbonnementViewSet(viewsets.ModelViewSet):
             code.nombre_utilisations += 1
             code.save(update_fields=["nombre_utilisations"])
 
+    @action(detail=False, methods=["post"], url_path="apercu")
+    def apercu(self, request):
+        """
+        POST /api/v1/abonnements/apercu/
+        body : { salon, duree_mois, code_promo? }
+
+        Calcule INSTANTANÉMENT le prix normal, la réduction et le prix final
+        — sans créer d'abonnement ni consommer une utilisation de code —
+        pour un affichage en direct côté frontend pendant que le
+        gestionnaire choisit la durée et saisit un code promo. La réduction
+        d'un code (fixe, en FCFA) est multipliée par le nombre de mois de
+        l'abonnement, exactement comme au moment de la création réelle
+        (voir AbonnementSerializer.create).
+        """
+        salon_id = request.data.get("salon")
+        code_promo = (request.data.get("code_promo") or "").strip()
+
+        try:
+            duree_mois = int(request.data.get("duree_mois"))
+        except (TypeError, ValueError):
+            return Response({"detail": "duree_mois est requis."}, status=status.HTTP_400_BAD_REQUEST)
+        if duree_mois < Abonnement.DUREE_MINIMALE_MOIS:
+            return Response(
+                {"detail": f"La durée minimale d'abonnement est de {Abonnement.DUREE_MINIMALE_MOIS} mois."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        salon = Salon.objects.filter(id=salon_id).first()
+        if not salon:
+            return Response({"detail": "Salon introuvable."}, status=status.HTTP_404_NOT_FOUND)
+        user = request.user
+        if not (user.est_admin_principal or user.est_admin_secondaire or salon.proprietaire_id == user.id):
+            return Response({"detail": "Vous n'êtes pas autorisé à voir le tarif de ce salon."},
+                             status=status.HTTP_403_FORBIDDEN)
+
+        est_premier = not salon.abonnements.exists()
+        prix_mensuel = Abonnement.PRIX_PREMIER_ABONNEMENT_MENSUEL if est_premier else Abonnement.PRIX_RENOUVELLEMENT_MENSUEL
+        prix_normal = prix_mensuel * duree_mois
+
+        reduction = 0
+        code_valide = False
+        erreur_code = None
+
+        if code_promo:
+            code_reduction = CodeReduction.objects.filter(code=code_promo).first()
+            if code_reduction:
+                if not code_reduction.actif:
+                    erreur_code = "Ce code n'est plus actif."
+                elif code_reduction.date_expiration and code_reduction.date_expiration < timezone.now():
+                    erreur_code = "Ce code a expiré."
+                elif (code_reduction.nombre_utilisations_max is not None
+                      and code_reduction.nombre_utilisations >= code_reduction.nombre_utilisations_max):
+                    erreur_code = "Ce code a atteint son nombre maximal d'utilisations."
+                else:
+                    reduction = code_reduction.montant_reduction * duree_mois
+                    code_valide = True
+            else:
+                code_sponsoring = CodeSponsoring.objects.filter(
+                    code=code_promo, actif=True, statut=CodeSponsoring.Statut.ACTIF
+                ).first()
+                if code_sponsoring:
+                    reduction = code_sponsoring.montant_reduction_utilisateur * duree_mois
+                    code_valide = True
+                else:
+                    erreur_code = "Ce code n'existe pas ou n'est plus valide."
+
+        prix_final = max(prix_normal - reduction, 0)
+
+        return Response({
+            "est_premier_abonnement": est_premier,
+            "prix_mensuel": prix_mensuel,
+            "duree_mois": duree_mois,
+            "prix_normal": prix_normal,
+            "reduction": reduction,
+            "prix_final": prix_final,
+            "code_valide": code_valide,
+            "erreur_code": erreur_code,
+        })
+
 
 class AbonnementEssaiView(APIView):
     """

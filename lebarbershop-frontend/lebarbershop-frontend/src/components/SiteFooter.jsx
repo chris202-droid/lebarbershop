@@ -42,24 +42,24 @@ export default function SiteFooter({ compact = false }) {
           <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5">
             {LIENS_RAPIDES.map((l) => (
               <Link key={l.label} to={l.to} className="text-xs transition-colors"
-                style={{ color: estActif(l.to) ? T.gold : "rgba(246,239,221,0.55)", fontWeight: estActif(l.to) ? 600 : 400 }}>
+                style={{ color: estActif(l.to) ? T.gold : "rgba(18,42,32,0.55)", fontWeight: estActif(l.to) ? 600 : 400 }}>
                 {l.label}
               </Link>
             ))}
           </nav>
 
           {!compact && (
-            <div className="flex items-center gap-2 text-xs shrink-0" style={{ color: "rgba(246,239,221,0.4)" }}>
+            <div className="flex items-center gap-2 text-xs shrink-0" style={{ color: "rgba(18,42,32,0.4)" }}>
               <Star size={12} /> Noté par les salons partenaires au Cameroun
             </div>
           )}
         </div>
 
         <div className="flex flex-col sm:flex-row items-center justify-between gap-2 mt-6">
-          <p className="text-xs" style={{ color: "rgba(246,239,221,0.35)" }}>© {new Date().getFullYear()} LeBarberShop. Tous droits réservés.</p>
-          <p className="text-[11px]" style={{ color: "rgba(246,239,221,0.3)" }}>
+          <p className="text-xs" style={{ color: "rgba(18,42,32,0.35)" }}>© {new Date().getFullYear()} LeBarberShop. Tous droits réservés.</p>
+          <p className="text-[11px]" style={{ color: "rgba(18,42,32,0.3)" }}>
             Powered by{" "}
-            <a href="https://kalarai.com" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: "rgba(246,239,221,0.45)" }}>
+            <a href="https://kalarai.com" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: "rgba(18,42,32,0.45)" }}>
               KALARAI
             </a>
           </p>

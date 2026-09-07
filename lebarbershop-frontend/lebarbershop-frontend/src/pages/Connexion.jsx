@@ -63,26 +63,26 @@ export default function Connexion() {
             <h1 style={{ fontFamily: "Fraunces, serif", fontSize: 26, color: T.ivory }}>LeBarberShop</h1>
           </div>
 
-          <form onSubmit={soumettre} className="rounded-lg p-6 space-y-3.5" style={{ background: "rgba(246,239,221,0.03)", border: `1px solid ${T.line}` }}>
+          <form onSubmit={soumettre} className="rounded-lg p-6 space-y-3.5" style={{ background: "rgba(18,42,32,0.03)", border: `1px solid ${T.line}` }}>
             <Erreur message={erreur} />
             <div className="relative">
-              <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "rgba(246,239,221,0.4)" }} />
+              <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "rgba(18,42,32,0.4)" }} />
               <input required value={username} onChange={(e) => setUsername(e.target.value)}
                 placeholder="Identifiant" className="w-full pl-10 pr-3 py-2.5 rounded-md text-sm outline-none"
-                style={{ background: "rgba(246,239,221,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
+                style={{ background: "rgba(18,42,32,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
             </div>
             <div className="relative">
-              <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "rgba(246,239,221,0.4)" }} />
+              <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "rgba(18,42,32,0.4)" }} />
               <input required type="password" value={password} onChange={(e) => setPassword(e.target.value)}
                 placeholder="Mot de passe" className="w-full pl-10 pr-3 py-2.5 rounded-md text-sm outline-none"
-                style={{ background: "rgba(246,239,221,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
+                style={{ background: "rgba(18,42,32,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
             </div>
             <button type="submit" disabled={envoi}
               className="w-full py-2.5 rounded-md text-sm font-semibold flex items-center justify-center gap-2"
               style={{ background: T.gold, color: T.inkDeep, opacity: envoi ? 0.6 : 1 }}>
               {envoi ? "Connexion…" : "Se connecter"} <ArrowRight size={15} />
             </button>
-            <p className="text-center text-xs" style={{ color: "rgba(246,239,221,0.45)" }}>
+            <p className="text-center text-xs" style={{ color: "rgba(18,42,32,0.45)" }}>
               Pas encore de compte ? <Link to="/inscription" className="underline" style={{ color: T.mint }}>Créer un compte</Link>
             </p>
           </form>
