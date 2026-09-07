@@ -74,8 +74,8 @@ function VueEncaissement({ salon }) {
         <div className="flex items-center gap-2 mb-5 px-1">
           <Wallet size={18} style={{ color: T.gold }} />
           <div>
-            <h2 style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.ivory }}>File d'attente</h2>
-            <p className="text-[11px]" style={{ color: "rgba(246,239,221,0.45)" }}>{tickets.length} ticket(s) en attente</p>
+            <h2 style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.titre }}>File d'attente</h2>
+            <p className="text-[11px]" style={{ color: "rgba(18,42,32,0.45)" }}>{tickets.length} ticket(s) en attente</p>
           </div>
         </div>
         <Erreur message={erreur} />
@@ -83,38 +83,38 @@ function VueEncaissement({ salon }) {
           {tickets.map((t) => (
             <button key={t.id} onClick={() => setSelection(t.id)}
               className="w-full text-left p-3 rounded-md transition-colors"
-              style={{ background: selection === t.id ? "rgba(232,184,75,0.1)" : "rgba(246,239,221,0.03)", border: `1px solid ${selection === t.id ? T.gold : T.line}` }}>
+              style={{ background: selection === t.id ? "rgba(201,147,42,0.1)" : "rgba(18,42,32,0.03)", border: `1px solid ${selection === t.id ? T.gold : T.line}` }}>
               <span className="font-mono text-[11px]" style={{ color: T.gold }}>{String(t.id).slice(0, 8)}</span>
               <p className="text-sm mt-1" style={{ color: T.ivory }}>{t.client_nom || t.nom_client_temporaire || "Client"}</p>
               <p className="font-mono text-sm mt-1.5" style={{ color: T.ivory }}>{total(t).toLocaleString()} FCFA</p>
             </button>
           ))}
-          {tickets.length === 0 && <p className="text-center text-sm py-10" style={{ color: "rgba(246,239,221,0.35)" }}>File vide — aucun ticket en attente</p>}
+          {tickets.length === 0 && <p className="text-center text-sm py-10" style={{ color: "rgba(18,42,32,0.35)" }}>File vide — aucun ticket en attente</p>}
         </div>
       </aside>
 
       <main className="flex-1 flex items-center justify-center p-8">
         {!ticket ? (
           <div className="text-center">
-            <Receipt size={40} className="mx-auto mb-3" style={{ color: "rgba(246,239,221,0.2)" }} />
-            <p style={{ color: "rgba(246,239,221,0.4)" }}>Sélectionnez un ticket pour l'encaisser</p>
+            <Receipt size={40} className="mx-auto mb-3" style={{ color: "rgba(18,42,32,0.2)" }} />
+            <p style={{ color: "rgba(18,42,32,0.4)" }}>Sélectionnez un ticket pour l'encaisser</p>
           </div>
         ) : (
           <div className="w-full max-w-sm">
-            <div className="rounded-lg p-6" style={{ background: T.inkDeep, border: `1px solid ${T.line}` }}>
+            <div className="rounded-lg p-6" style={{ background: T.inkDeep, border: `1px solid rgba(245,241,232,0.15)` }}>
               <div className="text-center mb-5">
-                <p className="font-mono text-xs" style={{ color: "rgba(246,239,221,0.4)" }}>{String(ticket.id).slice(0, 8)}</p>
+                <p className="font-mono text-xs" style={{ color: "rgba(245,241,232,0.5)" }}>{String(ticket.id).slice(0, 8)}</p>
               </div>
-              <div className="space-y-2 pb-4" style={{ borderBottom: `1px dashed ${T.line}` }}>
+              <div className="space-y-2 pb-4" style={{ borderBottom: `1px dashed rgba(245,241,232,0.2)` }}>
                 {(ticket.lignes || []).map((l, i) => (
                   <div key={i} className="flex justify-between text-sm">
-                    <span style={{ color: "rgba(246,239,221,0.75)" }}>{l.soin_nom || l.soin}</span>
-                    <span className="font-mono" style={{ color: T.ivory }}>{Number(l.prix).toLocaleString()}</span>
+                    <span style={{ color: "rgba(245,241,232,0.8)" }}>{l.soin_nom || l.soin}</span>
+                    <span className="font-mono" style={{ color: T.clair }}>{Number(l.prix).toLocaleString()}</span>
                   </div>
                 ))}
               </div>
               <div className="flex justify-between items-center mt-3">
-                <span className="text-sm" style={{ color: "rgba(246,239,221,0.6)" }}>Total à payer</span>
+                <span className="text-sm" style={{ color: "rgba(245,241,232,0.7)" }}>Total à payer</span>
                 <span className="font-mono text-2xl" style={{ color: T.gold }}>{total(ticket).toLocaleString()}</span>
               </div>
             </div>
@@ -123,7 +123,7 @@ function VueEncaissement({ salon }) {
               {MODES.map((m) => (
                 <button key={m.key} onClick={() => setMode(m.key)}
                   className="flex items-center gap-2 px-3 py-2.5 rounded-md text-xs font-medium"
-                  style={{ background: mode === m.key ? T.gold : "rgba(246,239,221,0.05)", color: mode === m.key ? T.inkDeep : "rgba(246,239,221,0.7)", border: `1px solid ${mode === m.key ? T.gold : T.line}` }}>
+                  style={{ background: mode === m.key ? T.gold : "rgba(18,42,32,0.05)", color: mode === m.key ? T.inkDeep : "rgba(18,42,32,0.7)", border: `1px solid ${mode === m.key ? T.gold : T.line}` }}>
                   <m.icon size={14} /> {m.label}
                 </button>
               ))}
@@ -167,7 +167,7 @@ function VueBilan({ salon }) {
         {[["semaine", "Semaine"], ["mois", "Mois"], ["trimestre", "Trimestre"], ["semestre", "Semestre"], ["annee", "Année"]].map(([k, l]) => (
           <button key={k} onClick={() => setPeriode(k)}
             className="px-3 py-1.5 rounded-full text-xs font-medium"
-            style={{ background: periode === k ? T.gold : "rgba(246,239,221,0.06)", color: periode === k ? T.inkDeep : "rgba(246,239,221,0.6)" }}>
+            style={{ background: periode === k ? T.gold : "rgba(18,42,32,0.06)", color: periode === k ? T.inkDeep : "rgba(18,42,32,0.6)" }}>
             {l}
           </button>
         ))}
@@ -176,43 +176,43 @@ function VueBilan({ salon }) {
       {donnees && (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="rounded-lg p-4" style={{ background: "rgba(246,239,221,0.04)", border: `1px solid ${T.line}` }}>
-              <p className="text-[11px] uppercase tracking-widest mb-2" style={{ color: "rgba(246,239,221,0.45)" }}>Chiffre d'affaires (cumul)</p>
+            <div className="rounded-lg p-4" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
+              <p className="text-[11px] uppercase tracking-widest mb-2" style={{ color: "rgba(18,42,32,0.45)" }}>Chiffre d'affaires (cumul)</p>
               <p className="font-mono" style={{ fontSize: 24, color: T.gold }}>{donnees.totaux.revenu_total.toLocaleString()} <span className="text-sm">FCFA</span></p>
             </div>
-            <div className="rounded-lg p-4" style={{ background: "rgba(246,239,221,0.04)", border: `1px solid ${T.line}` }}>
-              <p className="text-[11px] uppercase tracking-widest mb-2" style={{ color: "rgba(246,239,221,0.45)" }}>Tickets réalisés (cumul)</p>
+            <div className="rounded-lg p-4" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
+              <p className="text-[11px] uppercase tracking-widest mb-2" style={{ color: "rgba(18,42,32,0.45)" }}>Tickets réalisés (cumul)</p>
               <p className="font-mono" style={{ fontSize: 24, color: T.mint }}>{donnees.totaux.nombre_tickets_total}</p>
             </div>
           </div>
 
-          <div className="rounded-lg p-5" style={{ background: "rgba(246,239,221,0.04)", border: `1px solid ${T.line}` }}>
-            <h3 className="mb-4" style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.ivory }}>Revenus par période</h3>
+          <div className="rounded-lg p-5" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
+            <h3 className="mb-4" style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.titre }}>Revenus par période</h3>
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={donnees.lignes}>
                 <CartesianGrid stroke={T.line} vertical={false} />
-                <XAxis dataKey="periode" stroke="rgba(246,239,221,0.4)" fontSize={11} tickLine={false} axisLine={false} />
+                <XAxis dataKey="periode" stroke="rgba(18,42,32,0.4)" fontSize={11} tickLine={false} axisLine={false} />
                 <YAxis hide />
-                <Tooltip contentStyle={{ background: T.inkDeep, border: `1px solid ${T.line}`, borderRadius: 6, fontSize: 12 }} />
+                <Tooltip contentStyle={{ background: "#FFFFFF", border: `1px solid ${T.line}`, borderRadius: 6, fontSize: 12, boxShadow: "0 4px 16px rgba(18,42,32,0.12)" }} labelStyle={{ color: T.ivory }} />
                 <Bar dataKey="revenu" fill={T.gold} radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
-            {donnees.lignes.length === 0 && <p className="text-xs text-center py-6" style={{ color: "rgba(246,239,221,0.35)" }}>Aucune donnée sur cette période.</p>}
+            {donnees.lignes.length === 0 && <p className="text-xs text-center py-6" style={{ color: "rgba(18,42,32,0.35)" }}>Aucune donnée sur cette période.</p>}
           </div>
 
-          <div className="rounded-lg p-5" style={{ background: "rgba(246,239,221,0.04)", border: `1px solid ${T.line}` }}>
-            <h3 className="mb-4" style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.ivory }}>Bilan par employé</h3>
+          <div className="rounded-lg p-5" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
+            <h3 className="mb-4" style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.titre }}>Bilan par employé</h3>
             <div className="space-y-2">
               {donnees.par_employe.map((e) => (
-                <div key={e.employe_id} className="flex items-center justify-between p-2.5 rounded-md" style={{ background: "rgba(246,239,221,0.03)" }}>
+                <div key={e.employe_id} className="flex items-center justify-between p-2.5 rounded-md" style={{ background: "rgba(18,42,32,0.03)" }}>
                   <span className="text-sm" style={{ color: T.ivory }}>{e.nom}</span>
                   <div className="text-right">
-                    <span className="text-xs mr-3" style={{ color: "rgba(246,239,221,0.5)" }}>{e.nombre_soins} soin(s)</span>
+                    <span className="text-xs mr-3" style={{ color: "rgba(18,42,32,0.5)" }}>{e.nombre_soins} soin(s)</span>
                     <span className="font-mono text-sm" style={{ color: T.gold }}>{e.montant_total.toLocaleString()} FCFA</span>
                   </div>
                 </div>
               ))}
-              {donnees.par_employe.length === 0 && <p className="text-xs" style={{ color: "rgba(246,239,221,0.35)" }}>Aucune donnée employé.</p>}
+              {donnees.par_employe.length === 0 && <p className="text-xs" style={{ color: "rgba(18,42,32,0.35)" }}>Aucune donnée employé.</p>}
             </div>
           </div>
         </>
@@ -258,13 +258,13 @@ export default function Caisse() {
           {NAV.map((n) => (
             <button key={n.key} onClick={() => setVue(n.key)} title={n.label}
               className="w-11 h-11 rounded-md flex items-center justify-center"
-              style={{ background: vue === n.key ? "rgba(232,184,75,0.12)" : "transparent", color: vue === n.key ? T.gold : "rgba(246,239,221,0.5)" }}>
+              style={{ background: vue === n.key ? "rgba(201,147,42,0.12)" : "transparent", color: vue === n.key ? T.gold : "rgba(18,42,32,0.5)" }}>
               <n.icon size={18} />
             </button>
           ))}
           <button onClick={() => setPartenaireOuvert(true)} title="Devenir partenaire"
             className="w-11 h-11 rounded-md flex items-center justify-center mt-auto"
-            style={{ background: "rgba(232,184,75,0.1)", color: T.gold }}>
+            style={{ background: "rgba(201,147,42,0.1)", color: T.gold }}>
             <Handshake size={18} />
           </button>
         </div>
@@ -272,14 +272,14 @@ export default function Caisse() {
         <div className="flex-1 flex flex-col min-w-0">
           <header className="flex items-center justify-between px-6 py-4" style={{ borderBottom: `1px solid ${T.line}` }}>
             <div>
-              <h1 style={{ fontFamily: "Fraunces, serif", fontSize: 20, color: T.ivory }}>{NAV.find((n) => n.key === vue)?.label}</h1>
-              {salon && <p className="text-xs mt-0.5" style={{ color: "rgba(246,239,221,0.45)" }}>{salon.nom}</p>}
+              <h1 style={{ fontFamily: "Fraunces, serif", fontSize: 20, color: T.titre }}>{NAV.find((n) => n.key === vue)?.label}</h1>
+              {salon && <p className="text-xs mt-0.5" style={{ color: "rgba(18,42,32,0.45)" }}>{salon.nom}</p>}
             </div>
             <UserMenu />
           </header>
           <Erreur message={erreur} />
           {!salon ? (
-            <p className="p-6" style={{ color: "rgba(246,239,221,0.5)" }}>Aucun salon associé à ce compte.</p>
+            <p className="p-6" style={{ color: "rgba(18,42,32,0.5)" }}>Aucun salon associé à ce compte.</p>
           ) : (
             <>
               {vue === "caisse" && <VueEncaissement salon={salon} />}

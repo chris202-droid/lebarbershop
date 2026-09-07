@@ -42,12 +42,12 @@ export default function SiteHeader() {
       <div className={mobile ? "flex gap-2 pt-2" : "flex items-center gap-2"}>
         <Link to={routeParDefaut} onClick={() => setMenuOuvert(false)}
           className={`flex items-center gap-1.5 text-sm px-3 py-2 rounded-md ${mobile ? "flex-1 justify-center" : ""}`}
-          style={{ color: T.ivory, border: `1px solid ${T.line}` }}>
+          style={{ color: mobile ? T.clair : T.ivory, border: `1px solid ${mobile ? "rgba(245,241,232,0.25)" : T.line}` }}>
           <LayoutGrid size={14} /> Mon espace
         </Link>
         <button onClick={() => { setMenuOuvert(false); deconnecter(); window.location.href = "/"; }}
           className={`flex items-center gap-1.5 text-sm px-3 py-2 rounded-md ${mobile ? "flex-1 justify-center" : ""}`}
-          style={{ color: T.coral, border: `1px solid ${T.line}` }}>
+          style={{ color: T.coral, border: `1px solid ${mobile ? "rgba(217,80,60,0.4)" : T.line}` }}>
           <LogOut size={14} /> Déconnexion
         </button>
       </div>
@@ -55,12 +55,12 @@ export default function SiteHeader() {
       <div className={mobile ? "flex gap-2 pt-2" : "flex items-center gap-3"}>
         <Link to="/connexion" onClick={() => setMenuOuvert(false)}
           className={`text-sm px-3 py-2 rounded-md transition-colors ${mobile ? "flex-1 text-center" : ""}`}
-          style={{ color: estActifRoute("/connexion") ? T.gold : T.ivory, border: `1px solid ${estActifRoute("/connexion") ? T.gold : T.line}` }}>
+          style={{ color: estActifRoute("/connexion") ? T.gold : (mobile ? T.clair : T.ivory), border: `1px solid ${estActifRoute("/connexion") ? T.gold : (mobile ? "rgba(245,241,232,0.25)" : T.line)}` }}>
           Connexion
         </Link>
         <Link to="/inscription" onClick={() => setMenuOuvert(false)}
           className={`text-sm px-4 py-2 rounded-md font-semibold transition-shadow ${mobile ? "flex-1 text-center" : ""}`}
-          style={{ background: T.gold, color: T.inkDeep, boxShadow: estActifRoute("/inscription") ? `0 0 0 2px ${T.mint}` : "none" }}>
+          style={{ background: T.mint, color: T.inkDeep, boxShadow: estActifRoute("/inscription") ? `0 0 0 2px ${T.gold}` : "none" }}>
           Créer mon salon
         </Link>
       </div>
@@ -70,18 +70,18 @@ export default function SiteHeader() {
   return (
     <>
       <header className="sticky top-0 z-30 flex items-center justify-between px-6 py-4 backdrop-blur"
-        style={{ background: "rgba(11,61,59,0.85)", borderBottom: `1px solid ${T.line}` }}>
+        style={{ background: "rgba(255,255,255,0.85)", borderBottom: `1px solid ${T.line}`, boxShadow: "0 1px 0 rgba(18,42,32,0.04)" }}>
         <Link to="/" className="flex items-center gap-2 shrink-0">
           <div className="w-8 h-8 rounded-md flex items-center justify-center" style={{ background: T.gold }}>
             <Scissors size={16} style={{ color: T.inkDeep }} />
           </div>
-          <span style={{ fontFamily: "Fraunces, serif", fontSize: 17, color: T.ivory }}>LeBarberShop</span>
+          <span style={{ fontFamily: "Fraunces, serif", fontSize: 17, color: T.titre }}>LeBarberShop</span>
         </Link>
 
         <nav className="hidden lg:flex items-center gap-6">
           {NAV_LINKS.map((l) => (
             <Link key={l.label} to={cible(l)} className="text-sm transition-colors"
-              style={{ color: estActif(l) ? T.gold : "rgba(246,239,221,0.7)", fontWeight: estActif(l) ? 600 : 400 }}>
+              style={{ color: estActif(l) ? T.gold : "rgba(18,42,32,0.7)", fontWeight: estActif(l) ? 600 : 400 }}>
               {l.label}
             </Link>
           ))}
@@ -89,7 +89,7 @@ export default function SiteHeader() {
 
         <div className="hidden lg:flex items-center gap-3">
           <button onClick={() => setLangue(langue === "fr" ? "en" : "fr")}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs" style={{ background: "rgba(246,239,221,0.06)", color: "rgba(246,239,221,0.7)" }}>
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs" style={{ background: "rgba(18,42,32,0.06)", color: "rgba(18,42,32,0.7)" }}>
             <Globe size={13} /> {langue.toUpperCase()}
           </button>
           <ActionsConnexion />
@@ -101,10 +101,10 @@ export default function SiteHeader() {
       </header>
 
       {menuOuvert && (
-        <div className="lg:hidden px-6 py-4 space-y-3 sticky top-[65px] z-30" style={{ background: T.inkDeep, borderBottom: `1px solid ${T.line}` }}>
+        <div className="lg:hidden px-6 py-4 space-y-3 sticky top-[65px] z-30" style={{ background: T.inkDeep, borderBottom: `1px solid rgba(245,241,232,0.15)` }}>
           {NAV_LINKS.map((l) => (
             <Link key={l.label} to={cible(l)} onClick={() => setMenuOuvert(false)} className="block text-sm"
-              style={{ color: estActif(l) ? T.gold : "rgba(246,239,221,0.75)", fontWeight: estActif(l) ? 600 : 400 }}>
+              style={{ color: estActif(l) ? T.gold : "rgba(245,241,232,0.8)", fontWeight: estActif(l) ? 600 : 400 }}>
               {l.label}
             </Link>
           ))}
