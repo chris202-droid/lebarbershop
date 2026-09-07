@@ -276,7 +276,7 @@ export default function Accueil() {
           <div className="lg:col-span-2 space-y-4">
             {[
               { icon: Mail, label: "contact@lebarbershop.org" },
-              { icon: Phone, label: "+237 671 729 822" },
+              { icon: Phone, label: "+237 6XX XXX XXX" },
               { icon: MapPin, label: "Yaoundé & Douala, Cameroun" },
             ].map((c) => (
               <div key={c.label} className="flex items-center gap-3 text-sm" style={{ color: "rgba(246,239,221,0.7)" }}>
