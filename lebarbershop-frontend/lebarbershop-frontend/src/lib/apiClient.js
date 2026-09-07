@@ -9,7 +9,7 @@
  *   production stricte, envisager des cookies httpOnly côté serveur.
  */
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api/v1";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://lebarbershopback.vercel.app/api/v1";
 
 function getAccessToken() {
   return localStorage.getItem("lbs_access");

@@ -13,28 +13,29 @@ ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "*").split(",")
 
 INSTALLED_APPS = [
     "django.contrib.admin",
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
-    "django.contrib.staticfiles",
-
-    "rest_framework",
-    "rest_framework_simplejwt",
-    "corsheaders",
-    "django_filters",
-
-    "apps.accounts",
-    "apps.salons",
-    "apps.employes",
-    "apps.services",
-    "apps.clients",
-    "apps.tickets",
-    "apps.stocks",
-    "apps.avis",
-    "apps.geolocalisation",
-    "apps.analytics",
-    "apps.paiements",
+        "django.contrib.auth",
+        "django.contrib.contenttypes",
+        "django.contrib.sessions",
+        "django.contrib.messages",
+        "django.contrib.staticfiles",
+    
+        "rest_framework",
+        "rest_framework_simplejwt",
+        "corsheaders",
+        "django_filters",
+    
+        "apps.accounts",
+        "apps.salons",
+        "apps.employes",
+        "apps.services",
+        "apps.clients",
+        "apps.tickets",
+        "apps.stocks",
+        "apps.avis",
+        "apps.geolocalisation",
+        "apps.analytics",
+        "apps.paiements",
+        "apps.contact",
 ]
 
 MIDDLEWARE = [
@@ -85,7 +86,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'npg_e5uOFdanC6Jj')
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 # 2. Autorisations de domaines
-ALLOWED_HOSTS = ['.vercel.app', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['*.vercel.app', 'lebarbershop.org', '127.0.0.1']
 
 # 3. Configuration de votre base de données Neon
 import os
@@ -94,10 +95,10 @@ from urllib.parse import urlparse
 # 1. Récupération de l'URL Neon (Vercel ou chaîne brute par défaut)
  
 
-db_url = os.environ.get('POSTGRES_URL')
+
 
 # 2. Découpage manuel de l'URL avec les outils natifs de Python
-
+db_url = os.environ.get('POSTGRES_URL')
 if db_url:
     url = urlparse(db_url)
     DATABASES = {
@@ -204,6 +205,6 @@ SECURE_HSTS_SECONDS = 31536000 if not DEBUG else 0
 SECURE_HSTS_INCLUDE_SUBDOMAINS = not DEBUG
 
 CORS_ALLOWED_ORIGINS = os.environ.get(
-    "CORS_ALLOWED_ORIGINS", "https://www.lebarbershopback.vercel.app,https://www.lebarbershop.org"
+    "CORS_ALLOWED_ORIGINS", "https://lebarbershopback.vercel.app,https://lebarbershop.org"
 ).split(",")
 CORS_ALLOW_CREDENTIALS = True

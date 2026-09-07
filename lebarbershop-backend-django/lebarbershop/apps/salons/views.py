@@ -181,7 +181,7 @@ class AbonnementEssaiView(APIView):
             salon=salon,
             est_premier_abonnement=True,
             est_essai=True,
-            duree_mois=None,
+            duree_mois=1,
             prix_mensuel=0,
             montant_total=0,
             date_debut=date_debut,
