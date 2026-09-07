@@ -3,12 +3,18 @@
   "builds": [
     {
       "src": "lebarbershop-backend-django/lebarbershop/config/wsgi.py",
-      "use": "@vercel/python"
+      "use": "@vercel/python",
+      "config": {
+        "maxLambdaSize": "15mb",
+        "runtime": "python3.11"
+      }
     },
     {
-      "src": "lebarbershop-frontend/lebarbershop-frontend/package.json",
+      "src": "lebarbershop-frontend/**",
       "use": "@vercel/static-build",
-      "config": { "distDir": "build" }
+      "config": {
+        "distDir": "lebarbershop-frontend/build"
+      }
     }
   ],
   "routes": [
@@ -24,10 +30,14 @@
       "handle": "filesystem"
     },
     {
+      "src": "/static/(.*)",
+      "dest": "lebarbershop-frontend/build/static/$1"
+    },
+    {
       "src": "/(.*)",
-      "dest": "/index.html"
+      "dest": "lebarbershop-frontend/build/index.html"
     }
   ],
-   "buildCommand": "bash build_files.sh"
+  "buildCommand": "bash build_files.sh",
+  "installCommand": "pip install -r lebarbershop-backend-django/requirements.txt && npm install --prefix lebarbershop-frontend"
 }
-
