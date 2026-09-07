@@ -86,11 +86,15 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'npg_e5uOFdanC6Jj')
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 # 2. Autorisations de domaines
+<<<<<<< HEAD
 ALLOWED_HOSTS = ['*.vercel.app', 'lebarbershop.org', '127.0.0.1']
+=======
+ALLOWED_HOSTS = ['https://lebarbershop.org', 'https://lebarbershopback.vercel.app', '127.0.0.1']
+>>>>>>> 143ebca3cfe9b732da8991b365120ceb3bc4fa18
 
 # 3. Configuration de votre base de données Neon
 import os
-from urllib.parse import urlparse
+from urlib.parse import urlparse
 
 # 1. Récupération de l'URL Neon (Vercel ou chaîne brute par défaut)
  
