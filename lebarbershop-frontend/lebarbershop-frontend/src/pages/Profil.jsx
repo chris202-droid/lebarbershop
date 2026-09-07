@@ -47,7 +47,7 @@ export default function Profil() {
       <BoutonWhatsAppFlottant />
       <div className="flex-1 flex justify-center p-6">
         <div className="w-full max-w-lg">
-          <Link to="/tableau-de-bord" className="flex items-center gap-1.5 text-xs mb-6 w-fit" style={{ color: "rgba(18,42,32,0.5)" }}>
+          <Link to="/tableau-de-bord" className="flex items-center gap-1.5 text-xs mb-6 w-fit" style={{ color: "rgba(246,239,221,0.5)" }}>
             <ArrowLeft size={13} /> Retour
           </Link>
 
@@ -55,12 +55,12 @@ export default function Profil() {
             {form.photo_url ? (
               <img src={form.photo_url} alt="Photo de profil" className="w-16 h-16 rounded-full object-cover" style={{ border: `2px solid ${T.gold}` }} />
             ) : (
-              <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{ background: "rgba(201,147,42,0.15)" }}>
+              <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{ background: "rgba(232,184,75,0.15)" }}>
                 <User size={26} style={{ color: T.gold }} />
               </div>
             )}
             <div>
-              <h1 style={{ fontFamily: "Fraunces, serif", fontSize: 22, color: T.titre }}>
+              <h1 style={{ fontFamily: "Fraunces, serif", fontSize: 22, color: T.ivory }}>
                 {utilisateur.first_name || utilisateur.username}
               </h1>
               {utilisateur.est_admin_principal && <p className="text-xs" style={{ color: T.gold }}>Administrateur principal</p>}
@@ -68,40 +68,40 @@ export default function Profil() {
             </div>
           </div>
 
-          <form onSubmit={enregistrer} className="rounded-lg p-6 space-y-3" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
+          <form onSubmit={enregistrer} className="rounded-lg p-6 space-y-3" style={{ background: "rgba(246,239,221,0.04)", border: `1px solid ${T.line}` }}>
             <Erreur message={erreur} />
             {succes && <p className="text-xs" style={{ color: T.mint }}>Profil mis à jour.</p>}
 
             <div className="relative">
-              <Camera size={15} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "rgba(18,42,32,0.4)" }} />
+              <Camera size={15} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "rgba(246,239,221,0.4)" }} />
               <input value={form.photo_url} onChange={(e) => setForm({ ...form, photo_url: e.target.value })}
                 placeholder="URL de la photo de profil" className="w-full pl-9 pr-3 py-2.5 rounded-md text-sm outline-none"
-                style={{ background: "rgba(18,42,32,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
+                style={{ background: "rgba(246,239,221,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <input value={form.first_name} onChange={(e) => setForm({ ...form, first_name: e.target.value })}
                 placeholder="Prénom" className="px-3 py-2.5 rounded-md text-sm outline-none"
-                style={{ background: "rgba(18,42,32,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
+                style={{ background: "rgba(246,239,221,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
               <input value={form.last_name} onChange={(e) => setForm({ ...form, last_name: e.target.value })}
                 placeholder="Nom" className="px-3 py-2.5 rounded-md text-sm outline-none"
-                style={{ background: "rgba(18,42,32,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
+                style={{ background: "rgba(246,239,221,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
             </div>
             <div className="relative">
-              <Mail size={15} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "rgba(18,42,32,0.4)" }} />
+              <Mail size={15} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "rgba(246,239,221,0.4)" }} />
               <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}
                 placeholder="Email" className="w-full pl-9 pr-3 py-2.5 rounded-md text-sm outline-none"
-                style={{ background: "rgba(18,42,32,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
+                style={{ background: "rgba(246,239,221,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
             </div>
             <div className="relative">
-              <Phone size={15} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "rgba(18,42,32,0.4)" }} />
+              <Phone size={15} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "rgba(246,239,221,0.4)" }} />
               <input value={form.telephone} onChange={(e) => setForm({ ...form, telephone: e.target.value })}
                 placeholder="Téléphone" className="w-full pl-9 pr-3 py-2.5 rounded-md text-sm outline-none"
-                style={{ background: "rgba(18,42,32,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
+                style={{ background: "rgba(246,239,221,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
             </div>
 
             <button type="submit" disabled={envoi}
               className="w-full py-2.5 rounded-md text-sm font-semibold flex items-center justify-center gap-2"
-              style={{ background: T.mint, color: T.inkDeep, opacity: envoi ? 0.6 : 1 }}>
+              style={{ background: T.gold, color: T.inkDeep, opacity: envoi ? 0.6 : 1 }}>
               <Save size={15} /> {envoi ? "Enregistrement…" : "Enregistrer"}
             </button>
           </form>
@@ -114,7 +114,7 @@ export default function Profil() {
             </Link>
             <button onClick={deconnecter}
               className="w-full flex items-center justify-center gap-2 py-2.5 rounded-md text-sm font-semibold"
-              style={{ background: "rgba(217,80,60,0.12)", color: T.coral }}>
+              style={{ background: "rgba(255,122,92,0.12)", color: T.coral }}>
               <LogOut size={15} /> Se déconnecter
             </button>
           </div>

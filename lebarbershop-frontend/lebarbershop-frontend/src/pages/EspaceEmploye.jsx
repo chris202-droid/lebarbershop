@@ -13,7 +13,7 @@ import UserMenu from "../components/UserMenu";
 import { useAuth } from "../context/AuthContext";
 import { useRole } from "../context/RoleContext";
 import {
-  listerTickets, creerTicket, listerMesLignesTicket, confirmerLigne, annulerLigne, annulerTicket,
+  listerTickets, creerTicket, listerMesLignesTicket, confirmerLigne, annulerLigne,
 } from "../api/tickets";
 import { listerSoins } from "../api/services";
 import { listerAvis } from "../api/avis";
@@ -53,28 +53,28 @@ function VueDashboard({ posteActif }) {
     <div className="space-y-5">
       <Erreur message={erreur} />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="rounded-lg p-4" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
-          <p className="text-[11px] uppercase tracking-widest mb-2" style={{ color: "rgba(18,42,32,0.45)" }}>Soins réalisés</p>
+        <div className="rounded-lg p-4" style={{ background: "rgba(246,239,221,0.04)", border: `1px solid ${T.line}` }}>
+          <p className="text-[11px] uppercase tracking-widest mb-2" style={{ color: "rgba(246,239,221,0.45)" }}>Soins réalisés</p>
           <p className="font-mono" style={{ fontSize: 26, color: T.ivory }}>{totalSoins}</p>
         </div>
-        <div className="rounded-lg p-4" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
-          <p className="text-[11px] uppercase tracking-widest mb-2" style={{ color: "rgba(18,42,32,0.45)" }}>Montant généré</p>
+        <div className="rounded-lg p-4" style={{ background: "rgba(246,239,221,0.04)", border: `1px solid ${T.line}` }}>
+          <p className="text-[11px] uppercase tracking-widest mb-2" style={{ color: "rgba(246,239,221,0.45)" }}>Montant généré</p>
           <p className="font-mono" style={{ fontSize: 26, color: T.gold }}>{totalMontant.toLocaleString()} <span className="text-sm">FCFA</span></p>
         </div>
       </div>
 
-      <div className="rounded-lg p-5" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
-        <h3 className="mb-4" style={{ fontFamily: "Fraunces, serif", fontSize: 17, color: T.titre }}>Ma performance</h3>
+      <div className="rounded-lg p-5" style={{ background: "rgba(246,239,221,0.04)", border: `1px solid ${T.line}` }}>
+        <h3 className="mb-4" style={{ fontFamily: "Fraunces, serif", fontSize: 17, color: T.ivory }}>Ma performance</h3>
         <ResponsiveContainer width="100%" height={220}>
           <BarChart data={rendements}>
             <CartesianGrid stroke={T.line} vertical={false} />
-            <XAxis dataKey="date" stroke="rgba(18,42,32,0.4)" fontSize={11} tickLine={false} axisLine={false} />
+            <XAxis dataKey="date" stroke="rgba(246,239,221,0.4)" fontSize={11} tickLine={false} axisLine={false} />
             <YAxis hide />
-            <Tooltip contentStyle={{ background: "#FFFFFF", border: `1px solid ${T.line}`, borderRadius: 6, fontSize: 12, boxShadow: "0 4px 16px rgba(18,42,32,0.12)" }} labelStyle={{ color: T.ivory }} />
+            <Tooltip contentStyle={{ background: T.inkDeep, border: `1px solid ${T.line}`, borderRadius: 6, fontSize: 12 }} />
             <Bar dataKey="montant_total" fill={T.gold} radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
-        {rendements.length === 0 && <p className="text-xs text-center py-6" style={{ color: "rgba(18,42,32,0.35)" }}>Aucune donnée de performance pour le moment.</p>}
+        {rendements.length === 0 && <p className="text-xs text-center py-6" style={{ color: "rgba(246,239,221,0.35)" }}>Aucune donnée de performance pour le moment.</p>}
       </div>
     </div>
   );
@@ -111,10 +111,9 @@ function VueTickets({ posteActif }) {
   };
   useEffect(() => { charger(); }, [posteActif]);
 
-  const ajouterSoin = (soin) => setPanier([...panier, { ...soin, uid: Date.now() + soin.id, prixModifie: String(soin.prix) }]);
+  const ajouterSoin = (soin) => setPanier([...panier, { ...soin, uid: Date.now() + soin.id }]);
   const retirerSoin = (uid) => setPanier(panier.filter((p) => p.uid !== uid));
-  const modifierPrix = (uid, prix) => setPanier(panier.map((p) => (p.uid === uid ? { ...p, prixModifie: prix } : p)));
-  const total = panier.reduce((s, p) => s + Number(p.prixModifie || 0), 0);
+  const total = panier.reduce((s, p) => s + Number(p.prix), 0);
 
   const ouvrirTicket = async (e) => {
     e.preventDefault();
@@ -125,7 +124,7 @@ function VueTickets({ posteActif }) {
         salon: posteActif.salon,
         ...(nomClient ? { nom_client_temporaire: nomClient } : {}),
         employe_createur: posteActif.id,
-        lignes: panier.map((p) => ({ soin: p.id, employe_executant: posteActif.id, prix: Number(p.prixModifie) })), // prix modifiable à la main (point 6)
+        lignes: panier.map((p) => ({ soin: p.id, employe_executant: posteActif.id })),
       });
       setPanier([]); setNomClient(""); setFormOuvert(false);
       charger();
@@ -153,15 +152,6 @@ function VueTickets({ posteActif }) {
     }
   };
 
-  const annulerMonTicket = async (ticket) => {
-    try {
-      await annulerTicket(ticket.id); // POST /api/v1/tickets/{id}/annuler/ (point 3)
-      setTickets(tickets.filter((t) => t.id !== ticket.id));
-    } catch {
-      setErreur("Impossible d'annuler ce ticket.");
-    }
-  };
-
   return (
     <div className="space-y-6">
       <Erreur message={erreur} />
@@ -169,19 +159,19 @@ function VueTickets({ posteActif }) {
       {/* Soins qui m'attendent (assignés par la caissière ou un collègue) */}
       {mesLignes.length > 0 && (
         <div>
-          <h3 className="mb-3" style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.titre }}>Soins à confirmer</h3>
+          <h3 className="mb-3" style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.ivory }}>Soins à confirmer</h3>
           <div className="space-y-2">
             {mesLignes.map((l) => (
-              <div key={l.id} className="flex items-center justify-between p-3 rounded-md" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
+              <div key={l.id} className="flex items-center justify-between p-3 rounded-md" style={{ background: "rgba(246,239,221,0.04)", border: `1px solid ${T.line}` }}>
                 <div>
                   <p className="text-sm" style={{ color: T.ivory }}>{l.soin_nom || l.soin}</p>
-                  <p className="text-xs" style={{ color: "rgba(18,42,32,0.5)" }}>{Number(l.prix).toLocaleString()} FCFA</p>
+                  <p className="text-xs" style={{ color: "rgba(246,239,221,0.5)" }}>{Number(l.prix).toLocaleString()} FCFA</p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <button onClick={() => confirmer(l)} className="flex items-center gap-1 text-[11px] px-2.5 py-1.5 rounded-md" style={{ background: "rgba(30,158,100,0.15)", color: T.mint }}>
+                  <button onClick={() => confirmer(l)} className="flex items-center gap-1 text-[11px] px-2.5 py-1.5 rounded-md" style={{ background: "rgba(127,214,194,0.15)", color: T.mint }}>
                     <CheckCircle2 size={12} /> Confirmer
                   </button>
-                  <button onClick={() => annuler(l)} className="flex items-center gap-1 text-[11px] px-2.5 py-1.5 rounded-md" style={{ background: "rgba(217,80,60,0.15)", color: T.coral }}>
+                  <button onClick={() => annuler(l)} className="flex items-center gap-1 text-[11px] px-2.5 py-1.5 rounded-md" style={{ background: "rgba(255,122,92,0.15)", color: T.coral }}>
                     <XCircle size={12} /> Annuler
                   </button>
                 </div>
@@ -194,21 +184,21 @@ function VueTickets({ posteActif }) {
       {/* Mes tickets ouverts, en attente de passage en caisse */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h3 style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.titre }}>Mes tickets en attente de caisse</h3>
-          <button onClick={() => setFormOuvert(!formOuvert)} className="flex items-center gap-1.5 px-3 py-2 rounded-md text-xs font-semibold" style={{ background: T.mint, color: T.inkDeep }}>
+          <h3 style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.ivory }}>Mes tickets en attente de caisse</h3>
+          <button onClick={() => setFormOuvert(!formOuvert)} className="flex items-center gap-1.5 px-3 py-2 rounded-md text-xs font-semibold" style={{ background: T.gold, color: T.inkDeep }}>
             <Plus size={13} /> Nouveau ticket
           </button>
         </div>
 
         {formOuvert && (
-          <form onSubmit={ouvrirTicket} className="rounded-lg p-4 mb-4 space-y-3" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
+          <form onSubmit={ouvrirTicket} className="rounded-lg p-4 mb-4 space-y-3" style={{ background: "rgba(246,239,221,0.04)", border: `1px solid ${T.line}` }}>
             <input value={nomClient} onChange={(e) => setNomClient(e.target.value)}
               placeholder="Nom du client (laisser vide pour un nom automatique, ex. Clt1.28.8.26)"
-              className="w-full px-3 py-2.5 rounded-md text-sm outline-none" style={{ background: "rgba(18,42,32,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
+              className="w-full px-3 py-2.5 rounded-md text-sm outline-none" style={{ background: "rgba(246,239,221,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {soins.map((s) => (
                 <button type="button" key={s.id} onClick={() => ajouterSoin(s)}
-                  className="text-left p-2.5 rounded-md" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
+                  className="text-left p-2.5 rounded-md" style={{ background: "rgba(246,239,221,0.04)", border: `1px solid ${T.line}` }}>
                   <p className="text-xs" style={{ color: T.ivory }}>{s.nom}</p>
                   <p className="font-mono text-[11px] mt-1" style={{ color: T.gold }}>{Number(s.prix).toLocaleString()} FCFA</p>
                 </button>
@@ -217,17 +207,16 @@ function VueTickets({ posteActif }) {
             {panier.length > 0 && (
               <div className="space-y-1.5 pt-2" style={{ borderTop: `1px dashed ${T.line}` }}>
                 {panier.map((p) => (
-                  <div key={p.uid} className="flex items-center justify-between gap-2 text-xs">
-                    <span style={{ color: "rgba(18,42,32,0.8)" }}>{p.nom}</span>
-                    <div className="flex items-center gap-2 shrink-0">
-                      <input type="number" min="0" value={p.prixModifie} onChange={(e) => modifierPrix(p.uid, e.target.value)}
-                        className="w-24 px-2 py-1 rounded-md text-xs outline-none text-right" style={{ background: "rgba(18,42,32,0.05)", color: T.gold, border: `1px solid ${T.line}` }} />
+                  <div key={p.uid} className="flex items-center justify-between text-xs">
+                    <span style={{ color: "rgba(246,239,221,0.8)" }}>{p.nom}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono" style={{ color: T.ivory }}>{Number(p.prix).toLocaleString()}</span>
                       <button type="button" onClick={() => retirerSoin(p.uid)}><X size={12} style={{ color: T.coral }} /></button>
                     </div>
                   </div>
                 ))}
                 <div className="flex justify-between pt-1.5 text-sm">
-                  <span style={{ color: "rgba(18,42,32,0.6)" }}>Total</span>
+                  <span style={{ color: "rgba(246,239,221,0.6)" }}>Total</span>
                   <span className="font-mono" style={{ color: T.gold }}>{total.toLocaleString()} FCFA</span>
                 </div>
               </div>
@@ -241,23 +230,18 @@ function VueTickets({ posteActif }) {
 
         <div className="space-y-2">
           {tickets.map((t) => (
-            <div key={t.id} className="flex items-center justify-between p-3 rounded-md" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
+            <div key={t.id} className="flex items-center justify-between p-3 rounded-md" style={{ background: "rgba(246,239,221,0.04)", border: `1px solid ${T.line}` }}>
               <div>
                 <p className="text-sm" style={{ color: T.ivory }}>{t.client_nom || t.nom_client_temporaire}</p>
-                <p className="text-xs" style={{ color: "rgba(18,42,32,0.5)" }}>{(t.lignes || []).map((l) => l.soin_nom || l.soin).join(" · ")}</p>
+                <p className="text-xs" style={{ color: "rgba(246,239,221,0.5)" }}>{(t.lignes || []).map((l) => l.soin_nom || l.soin).join(" · ")}</p>
               </div>
               <div className="text-right">
                 <p className="font-mono text-sm" style={{ color: T.ivory }}>{Number(t.montant_net).toLocaleString()} FCFA</p>
-                <div className="flex items-center gap-1.5 justify-end mt-1">
-                  <span className="flex items-center gap-1 text-[10px]" style={{ color: T.gold }}><Clock size={10} /> Chez la caissière</span>
-                  <button onClick={() => annulerMonTicket(t)} className="text-[10px] px-1.5 py-0.5 rounded-full" style={{ background: "rgba(217,80,60,0.15)", color: T.coral }}>
-                    Annuler
-                  </button>
-                </div>
+                <span className="flex items-center gap-1 text-[10px] justify-end" style={{ color: T.gold }}><Clock size={10} /> Chez la caissière</span>
               </div>
             </div>
           ))}
-          {tickets.length === 0 && <p className="text-sm" style={{ color: "rgba(18,42,32,0.4)" }}>Aucun ticket en attente.</p>}
+          {tickets.length === 0 && <p className="text-sm" style={{ color: "rgba(246,239,221,0.4)" }}>Aucun ticket en attente.</p>}
         </div>
       </div>
     </div>
@@ -286,14 +270,14 @@ function VueAvis({ posteActif }) {
     <div className="space-y-3 max-w-lg">
       <Erreur message={erreur} />
       {avis.map((a) => (
-        <div key={a.id} className="rounded-lg p-4" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
+        <div key={a.id} className="rounded-lg p-4" style={{ background: "rgba(246,239,221,0.04)", border: `1px solid ${T.line}` }}>
           <div className="flex items-center gap-1 mb-1.5">
             {Array.from({ length: 5 }).map((_, i) => <Star key={i} size={12} fill={i < a.note ? T.gold : "none"} style={{ color: T.gold }} />)}
           </div>
-          {a.commentaire && <p className="text-sm" style={{ color: "rgba(18,42,32,0.8)" }}>"{a.commentaire}"</p>}
+          {a.commentaire && <p className="text-sm" style={{ color: "rgba(246,239,221,0.8)" }}>"{a.commentaire}"</p>}
         </div>
       ))}
-      {avis.length === 0 && <p className="text-sm" style={{ color: "rgba(18,42,32,0.4)" }}>Aucun avis pour le moment.</p>}
+      {avis.length === 0 && <p className="text-sm" style={{ color: "rgba(246,239,221,0.4)" }}>Aucun avis pour le moment.</p>}
     </div>
   );
 }
@@ -321,15 +305,15 @@ function VueAbonnement({ posteActif }) {
     <div className="max-w-md">
       <Erreur message={erreur} />
       {abonnement ? (
-        <div className="rounded-lg p-6" style={{ background: T.inkDeep, border: `1px solid rgba(245,241,232,0.15)` }}>
-          <p className="text-[11px] uppercase tracking-widest mb-2" style={{ color: "rgba(245,241,232,0.5)" }}>Abonnement du salon</p>
+        <div className="rounded-lg p-6" style={{ background: T.inkDeep, border: `1px solid ${T.line}` }}>
+          <p className="text-[11px] uppercase tracking-widest mb-2" style={{ color: "rgba(246,239,221,0.4)" }}>Abonnement du salon</p>
           <p className="font-mono" style={{ fontSize: 22, color: T.gold }}>{abonnement.statut === "actif" ? "Actif" : abonnement.statut}</p>
-          <p className="text-xs mt-2" style={{ color: "rgba(245,241,232,0.6)" }}>
+          <p className="text-xs mt-2" style={{ color: "rgba(246,239,221,0.5)" }}>
             Expire le {new Date(abonnement.date_fin).toLocaleDateString("fr-FR")}
           </p>
         </div>
       ) : (
-        <p className="text-sm" style={{ color: "rgba(18,42,32,0.4)" }}>Aucun abonnement actif pour ce salon.</p>
+        <p className="text-sm" style={{ color: "rgba(246,239,221,0.4)" }}>Aucun abonnement actif pour ce salon.</p>
       )}
     </div>
   );
@@ -361,14 +345,14 @@ export default function EspaceEmploye() {
             <div className="w-8 h-8 rounded-md flex items-center justify-center" style={{ background: T.gold }}>
               <Scissors size={16} style={{ color: T.inkDeep }} />
             </div>
-            <span style={{ fontFamily: "Fraunces, serif", fontSize: 17, color: T.titre }}>LeBarberShop</span>
+            <span style={{ fontFamily: "Fraunces, serif", fontSize: 17, color: T.ivory }}>LeBarberShop</span>
           </Link>
 
           {/* Nom du salon auquel l'employé appartient (point 2) */}
           {posteActif && (
-            <div className="mb-6 mt-2 rounded-md p-3" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
-              <p className="text-[10px] uppercase tracking-wide" style={{ color: "rgba(18,42,32,0.4)" }}>Mon salon</p>
-              <p style={{ color: T.titre, fontSize: 14, fontFamily: "Fraunces, serif" }}>{posteActif.salon_nom}</p>
+            <div className="mb-6 mt-2 rounded-md p-3" style={{ background: "rgba(246,239,221,0.04)", border: `1px solid ${T.line}` }}>
+              <p className="text-[10px] uppercase tracking-wide" style={{ color: "rgba(246,239,221,0.4)" }}>Mon salon</p>
+              <p style={{ color: T.ivory, fontSize: 14, fontFamily: "Fraunces, serif" }}>{posteActif.salon_nom}</p>
               <p className="text-[11px] mt-0.5" style={{ color: T.mint }}>{posteActif.role_affiche || posteActif.role}</p>
             </div>
           )}
@@ -379,7 +363,7 @@ export default function EspaceEmploye() {
 
           <button onClick={() => setPartenaireOuvert(true)}
             className="flex items-center gap-2 px-3.5 py-2.5 rounded-md text-sm font-semibold mt-2"
-            style={{ background: "rgba(201,147,42,0.12)", color: T.gold, border: `1px solid rgba(201,147,42,0.3)` }}>
+            style={{ background: "rgba(232,184,75,0.12)", color: T.gold, border: `1px solid rgba(232,184,75,0.3)` }}>
             <Handshake size={16} /> Devenir partenaire
           </button>
         </aside>
@@ -387,14 +371,14 @@ export default function EspaceEmploye() {
         <div className="flex-1 flex flex-col min-w-0">
           <header className="flex items-center justify-between px-6 py-4" style={{ borderBottom: `1px solid ${T.line}` }}>
             <div>
-              <h1 style={{ fontFamily: "Fraunces, serif", fontSize: 22, color: T.titre }}>{NAV.find((n) => n.key === vue)?.label}</h1>
-              {posteActif && <p className="text-xs mt-0.5" style={{ color: "rgba(18,42,32,0.45)" }}>{posteActif.salon_nom}</p>}
+              <h1 style={{ fontFamily: "Fraunces, serif", fontSize: 22, color: T.ivory }}>{NAV.find((n) => n.key === vue)?.label}</h1>
+              {posteActif && <p className="text-xs mt-0.5" style={{ color: "rgba(246,239,221,0.45)" }}>{posteActif.salon_nom}</p>}
             </div>
             <UserMenu />
           </header>
           <main className="flex-1 overflow-auto p-6">
             {!posteActif ? (
-              <p style={{ color: "rgba(18,42,32,0.5)" }}>Aucun poste actif trouvé. Contactez le gestionnaire de votre salon.</p>
+              <p style={{ color: "rgba(246,239,221,0.5)" }}>Aucun poste actif trouvé. Contactez le gestionnaire de votre salon.</p>
             ) : (
               <>
                 {vue === "dashboard" && <VueDashboard posteActif={posteActif} />}

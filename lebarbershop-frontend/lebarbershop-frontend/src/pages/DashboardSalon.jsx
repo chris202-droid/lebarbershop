@@ -10,8 +10,8 @@ import { ResponsiveContainer, AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tool
 import { T } from "../lib/tokens";
 import { NavItem, StatCard, TicketStub, Erreur } from "../components/UI";
 import { useAuth } from "../context/AuthContext";
-import { listerSalons, modifierSalon, listerAbonnements, creerAbonnement, demarrerEssaiGratuit, apercuAbonnement } from "../api/salons";
-import { listerTickets, validerTicket, creerTicket, listerMesLignesTicket, confirmerLigne, annulerLigne, annulerTicket } from "../api/tickets";
+import { listerSalons, modifierSalon, listerAbonnements, creerAbonnement, demarrerEssaiGratuit } from "../api/salons";
+import { listerTickets, validerTicket, creerTicket, listerMesLignesTicket, confirmerLigne, annulerLigne } from "../api/tickets";
 import { listerSoins } from "../api/services";
 import { listerProduits, creerProduit, enregistrerMouvementStock } from "../api/stocks";
 import { listerBilansJournaliers, listerRendementsEmployes } from "../api/analytics";
@@ -132,15 +132,6 @@ export default function DashboardSalon() {
       setTickets((cur) => cur.map((t) => (t.id === ticket.id ? { ...t, statut: "valide" } : t)));
     } catch {
       setErreur("Échec de la validation du ticket.");
-    }
-  };
-
-  const annulerTicketManager = async (ticket) => {
-    try {
-      await annulerTicket(ticket.id); // POST /api/v1/tickets/{id}/annuler/ (point 3)
-      setTickets((cur) => cur.map((t) => (t.id === ticket.id ? { ...t, statut: "annule" } : t)));
-    } catch {
-      setErreur("Impossible d'annuler ce ticket.");
     }
   };
 
@@ -350,26 +341,8 @@ export default function DashboardSalon() {
   // ---- Abonnement : renouvellement / essai ----
   const [duree, setDuree] = useState(3);
   const [modePaiement, setModePaiement] = useState(null);
-  const [codePromoRenouvellement, setCodePromoRenouvellement] = useState("");
   const [envoiAbonnement, setEnvoiAbonnement] = useState(false);
   const [erreurAbonnement, setErreurAbonnement] = useState("");
-  const [apercuAbo, setApercuAbo] = useState(null); // { prix_normal, reduction, prix_final, code_valide, erreur_code }
-
-  // Aperçu instantané (débounce léger) : prix normal, réduction (montant
-  // fixe du code × nombre de mois) et prix final, recalculés à chaque
-  // changement de durée ou de code promo — avant même de payer.
-  useEffect(() => {
-    if (!salon) return;
-    const identifiant = setTimeout(async () => {
-      try {
-        const a = await apercuAbonnement({ salon: salon.id, duree_mois: duree, code_promo: codePromoRenouvellement || undefined }); // POST /api/v1/abonnements/apercu/
-        setApercuAbo(a);
-      } catch {
-        setApercuAbo(null);
-      }
-    }, 400);
-    return () => clearTimeout(identifiant);
-  }, [duree, codePromoRenouvellement, salon?.id]);
 
   const demarrerEssai = async () => {
     setErreurAbonnement(""); setEnvoiAbonnement(true);
@@ -386,13 +359,10 @@ export default function DashboardSalon() {
   const renouveler = async () => {
     setErreurAbonnement(""); setEnvoiAbonnement(true);
     try {
-      const abo = await creerAbonnement({ // POST /api/v1/abonnements/ — point 1 : code promo ou parrainage appliqué au montant final
-        salon: salon.id, duree_mois: duree, ...(codePromoRenouvellement ? { code_promo: codePromoRenouvellement } : {}),
-      });
+      const abo = await creerAbonnement({ salon: salon.id, duree_mois: duree }); // POST /api/v1/abonnements/
       setAbonnements([abo, ...abonnements]);
-      setCodePromoRenouvellement("");
     } catch (err) {
-      setErreurAbonnement(err.body?.code_promo?.[0] || err.body?.detail || "Impossible de créer l'abonnement.");
+      setErreurAbonnement(err.body?.detail || "Impossible de créer l'abonnement.");
     } finally {
       setEnvoiAbonnement(false);
     }
@@ -411,7 +381,7 @@ export default function DashboardSalon() {
           <div className="w-8 h-8 rounded-md flex items-center justify-center" style={{ background: T.gold }}>
             <Scissors size={16} style={{ color: T.inkDeep }} />
           </div>
-          <span style={{ fontFamily: "Fraunces, serif", fontSize: 17, color: T.titre }}>LeBarberShop</span>
+          <span style={{ fontFamily: "Fraunces, serif", fontSize: 17, color: T.ivory }}>LeBarberShop</span>
         </Link>
 
         {/* Sélecteur de salon — un gestionnaire peut en posséder plusieurs */}
@@ -419,24 +389,24 @@ export default function DashboardSalon() {
           <div className="relative mb-4">
             <button onClick={() => setSelecteurOuvert(!selecteurOuvert)}
               className="w-full flex items-center justify-between px-3 py-2.5 rounded-md text-left"
-              style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
+              style={{ background: "rgba(246,239,221,0.04)", border: `1px solid ${T.line}` }}>
               <div className="min-w-0">
-                <p className="truncate" style={{ color: T.titre, fontSize: 13, fontFamily: "Fraunces, serif" }}>{salon?.nom}</p>
-                <p className="text-[10px] truncate" style={{ color: "rgba(18,42,32,0.5)" }}>{salon?.secteur_geographique}, {salon?.ville}</p>
+                <p className="truncate" style={{ color: T.ivory, fontSize: 13, fontFamily: "Fraunces, serif" }}>{salon?.nom}</p>
+                <p className="text-[10px] truncate" style={{ color: "rgba(246,239,221,0.5)" }}>{salon?.secteur_geographique}, {salon?.ville}</p>
               </div>
-              <ChevronDown size={14} style={{ color: "rgba(18,42,32,0.5)" }} />
+              <ChevronDown size={14} style={{ color: "rgba(246,239,221,0.5)" }} />
             </button>
             {selecteurOuvert && (
-              <div className="absolute left-0 right-0 top-full mt-1 rounded-md py-1 z-30" style={{ background: T.inkDeep, border: `1px solid rgba(245,241,232,0.15)` }}>
+              <div className="absolute left-0 right-0 top-full mt-1 rounded-md py-1 z-30" style={{ background: T.inkDeep, border: `1px solid ${T.line}` }}>
                 {salons.map((s) => (
                   <button key={s.id} onClick={() => { setSalonActifId(s.id); setSelecteurOuvert(false); }}
                     className="w-full text-left px-3 py-2 text-xs truncate"
-                    style={{ color: s.id === salonActifId ? T.gold : "rgba(245,241,232,0.8)" }}>
+                    style={{ color: s.id === salonActifId ? T.gold : "rgba(246,239,221,0.7)" }}>
                     {s.nom}
                   </button>
                 ))}
                 <Link to="/onboarding" onClick={() => setSelecteurOuvert(false)}
-                  className="flex items-center gap-1.5 px-3 py-2 text-xs" style={{ color: T.mint, borderTop: `1px solid rgba(245,241,232,0.15)` }}>
+                  className="flex items-center gap-1.5 px-3 py-2 text-xs" style={{ color: T.mint, borderTop: `1px solid ${T.line}` }}>
                   <Plus size={12} /> Ajouter un salon
                 </Link>
               </div>
@@ -451,7 +421,7 @@ export default function DashboardSalon() {
 
       <div className="flex-1 flex flex-col min-w-0">
         <header className="flex items-center justify-between px-6 py-4" style={{ borderBottom: `1px solid ${T.line}` }}>
-          <h1 style={{ fontFamily: "Fraunces, serif", fontSize: 22, color: T.titre }}>{titre}</h1>
+          <h1 style={{ fontFamily: "Fraunces, serif", fontSize: 22, color: T.ivory }}>{titre}</h1>
           <UserMenu />
         </header>
 
@@ -459,8 +429,8 @@ export default function DashboardSalon() {
           <Erreur message={erreur} />
           {!salon && (
             <div>
-              <p className="mb-3" style={{ color: "rgba(18,42,32,0.5)" }}>Aucun salon associé à ce compte.</p>
-              <Link to="/onboarding" className="inline-flex items-center gap-1.5 px-4 py-2 rounded-md text-sm font-semibold" style={{ background: T.mint, color: T.inkDeep }}>
+              <p className="mb-3" style={{ color: "rgba(246,239,221,0.5)" }}>Aucun salon associé à ce compte.</p>
+              <Link to="/onboarding" className="inline-flex items-center gap-1.5 px-4 py-2 rounded-md text-sm font-semibold" style={{ background: T.gold, color: T.inkDeep }}>
                 <Plus size={15} /> Créer mon salon
               </Link>
             </div>
@@ -474,8 +444,8 @@ export default function DashboardSalon() {
                 <StatCard label="Produits en alerte" value={alertes.length} icon={AlertTriangle} />
               </div>
 
-              <div className="rounded-lg p-5" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
-                <h3 className="mb-4" style={{ fontFamily: "Fraunces, serif", fontSize: 18, color: T.titre }}>Entrées journalières</h3>
+              <div className="rounded-lg p-5" style={{ background: "rgba(246,239,221,0.04)", border: `1px solid ${T.line}` }}>
+                <h3 className="mb-4" style={{ fontFamily: "Fraunces, serif", fontSize: 18, color: T.ivory }}>Entrées journalières</h3>
                 <ResponsiveContainer width="100%" height={200}>
                   <AreaChart data={courbe}>
                     <defs>
@@ -485,54 +455,54 @@ export default function DashboardSalon() {
                       </linearGradient>
                     </defs>
                     <CartesianGrid stroke={T.line} vertical={false} />
-                    <XAxis dataKey="j" stroke="rgba(18,42,32,0.4)" fontSize={11} tickLine={false} axisLine={false} />
+                    <XAxis dataKey="j" stroke="rgba(246,239,221,0.4)" fontSize={11} tickLine={false} axisLine={false} />
                     <YAxis hide />
-                    <Tooltip contentStyle={{ background: "#FFFFFF", border: `1px solid ${T.line}`, borderRadius: 6, fontSize: 12, boxShadow: "0 4px 16px rgba(18,42,32,0.12)" }} labelStyle={{ color: T.ivory }} />
+                    <Tooltip contentStyle={{ background: T.inkDeep, border: `1px solid ${T.line}`, borderRadius: 6, fontSize: 12 }} />
                     <Area type="monotone" dataKey="montant" stroke={T.gold} strokeWidth={2} fill="url(#gold)" />
                   </AreaChart>
                 </ResponsiveContainer>
-                {courbe.length === 0 && <p className="text-xs text-center py-6" style={{ color: "rgba(18,42,32,0.35)" }}>Aucun bilan journalier pour le moment.</p>}
+                {courbe.length === 0 && <p className="text-xs text-center py-6" style={{ color: "rgba(246,239,221,0.35)" }}>Aucun bilan journalier pour le moment.</p>}
               </div>
 
-              <div className="rounded-lg p-5" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
+              <div className="rounded-lg p-5" style={{ background: "rgba(246,239,221,0.04)", border: `1px solid ${T.line}` }}>
                 <div className="flex items-center gap-2 mb-4"><TrendingUp size={16} style={{ color: T.mint }} />
-                  <h3 style={{ fontFamily: "Fraunces, serif", fontSize: 18, color: T.titre }}>Rendement par employé (30 derniers jours)</h3>
+                  <h3 style={{ fontFamily: "Fraunces, serif", fontSize: 18, color: T.ivory }}>Rendement par employé (30 derniers jours)</h3>
                 </div>
                 <ResponsiveContainer width="100%" height={200}>
                   <BarChart data={rendementsEmployes}>
                     <CartesianGrid stroke={T.line} vertical={false} />
-                    <XAxis dataKey="nom" stroke="rgba(18,42,32,0.4)" fontSize={11} tickLine={false} axisLine={false} />
+                    <XAxis dataKey="nom" stroke="rgba(246,239,221,0.4)" fontSize={11} tickLine={false} axisLine={false} />
                     <YAxis hide />
-                    <Tooltip contentStyle={{ background: "#FFFFFF", border: `1px solid ${T.line}`, borderRadius: 6, fontSize: 12, boxShadow: "0 4px 16px rgba(18,42,32,0.12)" }} labelStyle={{ color: T.ivory }} />
+                    <Tooltip contentStyle={{ background: T.inkDeep, border: `1px solid ${T.line}`, borderRadius: 6, fontSize: 12 }} />
                     <Bar dataKey="montant" fill={T.coral} radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
-                {rendementsEmployes.length === 0 && <p className="text-xs text-center py-6" style={{ color: "rgba(18,42,32,0.35)" }}>Aucun employé pour le moment.</p>}
+                {rendementsEmployes.length === 0 && <p className="text-xs text-center py-6" style={{ color: "rgba(246,239,221,0.35)" }}>Aucun employé pour le moment.</p>}
               </div>
 
               {/* Paramètres du salon : nom modifiable une seule fois, photo */}
-              <div className="rounded-lg p-5" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
-                <h3 className="mb-4" style={{ fontFamily: "Fraunces, serif", fontSize: 18, color: T.titre }}>Paramètres du salon</h3>
+              <div className="rounded-lg p-5" style={{ background: "rgba(246,239,221,0.04)", border: `1px solid ${T.line}` }}>
+                <h3 className="mb-4" style={{ fontFamily: "Fraunces, serif", fontSize: 18, color: T.ivory }}>Paramètres du salon</h3>
                 <form onSubmit={enregistrerParametres} className="space-y-3 max-w-md">
                   <Erreur message={erreurParametres} />
                   {succesParametres && <p className="text-xs" style={{ color: T.mint }}>Modifications enregistrées.</p>}
                   <div>
                     <input value={nomSalon} onChange={(e) => setNomSalon(e.target.value)} disabled={!salon.nom_modifiable}
                       className="w-full px-3 py-2.5 rounded-md text-sm outline-none"
-                      style={{ background: "rgba(18,42,32,0.05)", color: T.ivory, border: `1px solid ${T.line}`, opacity: salon.nom_modifiable ? 1 : 0.5 }} />
-                    <p className="text-[11px] mt-1 flex items-center gap-1" style={{ color: "rgba(18,42,32,0.4)" }}>
+                      style={{ background: "rgba(246,239,221,0.05)", color: T.ivory, border: `1px solid ${T.line}`, opacity: salon.nom_modifiable ? 1 : 0.5 }} />
+                    <p className="text-[11px] mt-1 flex items-center gap-1" style={{ color: "rgba(246,239,221,0.4)" }}>
                       {salon.nom_modifiable ? "Vous pouvez renommer votre salon une seule fois." : <><Lock size={10} /> Le nom a déjà été modifié une fois et ne peut plus l'être.</>}
                     </p>
                   </div>
                   <div className="relative">
-                    <Camera size={15} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "rgba(18,42,32,0.4)" }} />
+                    <Camera size={15} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "rgba(246,239,221,0.4)" }} />
                     <input value={photoSalon.startsWith("data:") ? "" : photoSalon} onChange={(e) => setPhotoSalon(e.target.value)}
                       placeholder={photoSalon.startsWith("data:") ? "Image téléversée ✓ — ou collez une URL pour la remplacer" : "URL de la photo du salon"}
                       className="w-full pl-9 pr-3 py-2.5 rounded-md text-sm outline-none"
-                      style={{ background: "rgba(18,42,32,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
+                      style={{ background: "rgba(246,239,221,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
                   </div>
                   <label className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-md text-sm cursor-pointer"
-                    style={{ background: "rgba(18,42,32,0.05)", color: "rgba(18,42,32,0.7)", border: `1px dashed ${T.line}` }}>
+                    style={{ background: "rgba(246,239,221,0.05)", color: "rgba(246,239,221,0.7)", border: `1px dashed ${T.line}` }}>
                     <Upload size={14} /> Ou téléverser une image depuis votre appareil
                     <input type="file" accept="image/*" className="hidden" onChange={(e) => televerserPhoto(e.target.files?.[0])} />
                   </label>
@@ -540,14 +510,14 @@ export default function DashboardSalon() {
                     <img src={photoSalon} alt="Aperçu du salon" className="w-full h-32 object-cover rounded-md" style={{ border: `1px solid ${T.line}` }} />
                   )}
                   <div>
-                    <label className="text-xs mb-1 block" style={{ color: "rgba(18,42,32,0.5)" }}>Nombre d'employés maximum</label>
+                    <label className="text-xs mb-1 block" style={{ color: "rgba(246,239,221,0.5)" }}>Nombre d'employés maximum</label>
                     <input type="number" min="1" value={nombreEmployesMax} onChange={(e) => setNombreEmployesMax(e.target.value)}
                       className="w-full px-3 py-2.5 rounded-md text-sm outline-none"
-                      style={{ background: "rgba(18,42,32,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
-                    <p className="text-[11px] mt-1" style={{ color: "rgba(18,42,32,0.4)" }}>Augmentez ce nombre à tout moment pour recruter davantage.</p>
+                      style={{ background: "rgba(246,239,221,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
+                    <p className="text-[11px] mt-1" style={{ color: "rgba(246,239,221,0.4)" }}>Augmentez ce nombre à tout moment pour recruter davantage.</p>
                   </div>
                   <button type="submit" disabled={envoiParametres} className="px-4 py-2 rounded-md text-sm font-semibold"
-                    style={{ background: T.mint, color: T.inkDeep, opacity: envoiParametres ? 0.6 : 1 }}>
+                    style={{ background: T.gold, color: T.inkDeep, opacity: envoiParametres ? 0.6 : 1 }}>
                     {envoiParametres ? "Enregistrement…" : "Enregistrer"}
                   </button>
                 </form>
@@ -559,19 +529,19 @@ export default function DashboardSalon() {
             <div className="space-y-6">
               {lignesAConfirmer.length > 0 && (
                 <div>
-                  <h3 className="mb-3" style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.titre }}>Soins à confirmer</h3>
+                  <h3 className="mb-3" style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.ivory }}>Soins à confirmer</h3>
                   <div className="space-y-2">
                     {lignesAConfirmer.map((l) => (
-                      <div key={l.id} className="flex items-center justify-between p-3 rounded-md" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
+                      <div key={l.id} className="flex items-center justify-between p-3 rounded-md" style={{ background: "rgba(246,239,221,0.04)", border: `1px solid ${T.line}` }}>
                         <div>
                           <p className="text-sm" style={{ color: T.ivory }}>{l.soin_nom} — {l.employe_executant_nom}</p>
-                          <p className="text-xs" style={{ color: "rgba(18,42,32,0.5)" }}>{Number(l.prix).toLocaleString()} FCFA</p>
+                          <p className="text-xs" style={{ color: "rgba(246,239,221,0.5)" }}>{Number(l.prix).toLocaleString()} FCFA</p>
                         </div>
                         <div className="flex items-center gap-2">
-                          <button onClick={() => confirmerLigneManager(l)} className="flex items-center gap-1 text-[11px] px-2.5 py-1.5 rounded-md" style={{ background: "rgba(30,158,100,0.15)", color: T.mint }}>
+                          <button onClick={() => confirmerLigneManager(l)} className="flex items-center gap-1 text-[11px] px-2.5 py-1.5 rounded-md" style={{ background: "rgba(127,214,194,0.15)", color: T.mint }}>
                             <CheckCircle2 size={12} /> Confirmer
                           </button>
-                          <button onClick={() => annulerLigneManager(l)} className="flex items-center gap-1 text-[11px] px-2.5 py-1.5 rounded-md" style={{ background: "rgba(217,80,60,0.15)", color: T.coral }}>
+                          <button onClick={() => annulerLigneManager(l)} className="flex items-center gap-1 text-[11px] px-2.5 py-1.5 rounded-md" style={{ background: "rgba(255,122,92,0.15)", color: T.coral }}>
                             <XCircle size={12} /> Annuler
                           </button>
                         </div>
@@ -583,24 +553,24 @@ export default function DashboardSalon() {
 
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <h3 style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.titre }}>Tickets</h3>
+                  <h3 style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.ivory }}>Tickets</h3>
                   {posteManager && (
-                    <button onClick={() => setFormTicketOuvert(!formTicketOuvert)} className="flex items-center gap-1.5 px-3 py-2 rounded-md text-xs font-semibold" style={{ background: T.mint, color: T.inkDeep }}>
+                    <button onClick={() => setFormTicketOuvert(!formTicketOuvert)} className="flex items-center gap-1.5 px-3 py-2 rounded-md text-xs font-semibold" style={{ background: T.gold, color: T.inkDeep }}>
                       <Plus size={13} /> Nouveau ticket
                     </button>
                   )}
                 </div>
 
                 {formTicketOuvert && (
-                  <form onSubmit={ouvrirTicketManager} className="rounded-lg p-4 mb-4 space-y-3" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
+                  <form onSubmit={ouvrirTicketManager} className="rounded-lg p-4 mb-4 space-y-3" style={{ background: "rgba(246,239,221,0.04)", border: `1px solid ${T.line}` }}>
                     <Erreur message={erreurTicket} />
                     <input value={nomClientTicket} onChange={(e) => setNomClientTicket(e.target.value)}
                       placeholder="Nom du client (laisser vide pour un nom automatique, ex. Clt1.28.8.26)"
-                      className="w-full px-3 py-2.5 rounded-md text-sm outline-none" style={{ background: "rgba(18,42,32,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
+                      className="w-full px-3 py-2.5 rounded-md text-sm outline-none" style={{ background: "rgba(246,239,221,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                       {soins.map((s) => (
                         <button type="button" key={s.id} onClick={() => ajouterSoinPanier(s)}
-                          className="text-left p-2.5 rounded-md" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
+                          className="text-left p-2.5 rounded-md" style={{ background: "rgba(246,239,221,0.04)", border: `1px solid ${T.line}` }}>
                           <p className="text-xs" style={{ color: T.ivory }}>{s.nom}</p>
                           <p className="font-mono text-[11px] mt-1" style={{ color: T.gold }}>{Number(s.prix).toLocaleString()} FCFA</p>
                         </button>
@@ -610,17 +580,17 @@ export default function DashboardSalon() {
                       <div className="space-y-2 pt-2" style={{ borderTop: `1px dashed ${T.line}` }}>
                         {panierTicket.map((p) => (
                           <div key={p.uid} className="flex items-center justify-between gap-2 text-xs">
-                            <span style={{ color: "rgba(18,42,32,0.8)" }}>{p.nom}</span>
+                            <span style={{ color: "rgba(246,239,221,0.8)" }}>{p.nom}</span>
                             <div className="flex items-center gap-2 shrink-0">
                               {/* Prix modifiable à la main lors de l'enregistrement (point 3) */}
                               <input type="number" min="0" value={p.prixModifie} onChange={(e) => modifierPrixPanier(p.uid, e.target.value)}
-                                className="w-24 px-2 py-1 rounded-md text-xs outline-none text-right" style={{ background: "rgba(18,42,32,0.05)", color: T.gold, border: `1px solid ${T.line}` }} />
+                                className="w-24 px-2 py-1 rounded-md text-xs outline-none text-right" style={{ background: "rgba(246,239,221,0.05)", color: T.gold, border: `1px solid ${T.line}` }} />
                               <button type="button" onClick={() => retirerSoinPanier(p.uid)}><X size={12} style={{ color: T.coral }} /></button>
                             </div>
                           </div>
                         ))}
                         <div className="flex justify-between pt-1.5 text-sm">
-                          <span style={{ color: "rgba(18,42,32,0.6)" }}>Total</span>
+                          <span style={{ color: "rgba(246,239,221,0.6)" }}>Total</span>
                           <span className="font-mono" style={{ color: T.gold }}>{totalPanierTicket.toLocaleString()} FCFA</span>
                         </div>
                       </div>
@@ -633,8 +603,8 @@ export default function DashboardSalon() {
                 )}
 
                 <div className="space-y-2.5">
-                  {tickets.map((t) => <TicketStub key={t.id} ticket={t} onValider={marquerValide} onAnnuler={annulerTicketManager} />)}
-                  {tickets.length === 0 && <p className="text-sm" style={{ color: "rgba(18,42,32,0.4)" }}>Aucun ticket pour ce salon.</p>}
+                  {tickets.map((t) => <TicketStub key={t.id} ticket={t} onValider={marquerValide} />)}
+                  {tickets.length === 0 && <p className="text-sm" style={{ color: "rgba(246,239,221,0.4)" }}>Aucun ticket pour ce salon.</p>}
                 </div>
               </div>
             </div>
@@ -642,28 +612,28 @@ export default function DashboardSalon() {
 
           {salon && vue === "employes" && (
             <div className="space-y-5">
-              <form onSubmit={soumettreEmploye} className="rounded-lg p-5 space-y-3" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
-                <h3 style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.titre }}>Ajouter un employé</h3>
-                <p className="text-[11px]" style={{ color: "rgba(18,42,32,0.45)" }}>
+              <form onSubmit={soumettreEmploye} className="rounded-lg p-5 space-y-3" style={{ background: "rgba(246,239,221,0.04)", border: `1px solid ${T.line}` }}>
+                <h3 style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.ivory }}>Ajouter un employé</h3>
+                <p className="text-[11px]" style={{ color: "rgba(246,239,221,0.45)" }}>
                   Vous définissez ses identifiants ; il pourra changer ce mot de passe à sa première connexion.
                 </p>
                 <Erreur message={erreurEmploye} />
                 <div className="grid grid-cols-2 gap-3">
                   <input required value={formEmploye.first_name} onChange={(e) => setFormEmploye({ ...formEmploye, first_name: e.target.value })}
-                    placeholder="Prénom" className="px-3 py-2.5 rounded-md text-sm outline-none" style={{ background: "rgba(18,42,32,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
+                    placeholder="Prénom" className="px-3 py-2.5 rounded-md text-sm outline-none" style={{ background: "rgba(246,239,221,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
                   <input value={formEmploye.last_name} onChange={(e) => setFormEmploye({ ...formEmploye, last_name: e.target.value })}
-                    placeholder="Nom" className="px-3 py-2.5 rounded-md text-sm outline-none" style={{ background: "rgba(18,42,32,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
+                    placeholder="Nom" className="px-3 py-2.5 rounded-md text-sm outline-none" style={{ background: "rgba(246,239,221,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
                   <input required value={formEmploye.username} onChange={(e) => setFormEmploye({ ...formEmploye, username: e.target.value })}
-                    placeholder="Identifiant" className="px-3 py-2.5 rounded-md text-sm outline-none" style={{ background: "rgba(18,42,32,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
+                    placeholder="Identifiant" className="px-3 py-2.5 rounded-md text-sm outline-none" style={{ background: "rgba(246,239,221,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
                   <input required type="password" value={formEmploye.password} onChange={(e) => setFormEmploye({ ...formEmploye, password: e.target.value })}
-                    placeholder="Mot de passe provisoire" className="px-3 py-2.5 rounded-md text-sm outline-none" style={{ background: "rgba(18,42,32,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
+                    placeholder="Mot de passe provisoire" className="px-3 py-2.5 rounded-md text-sm outline-none" style={{ background: "rgba(246,239,221,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
                   <select value={formEmploye.role} onChange={(e) => setFormEmploye({ ...formEmploye, role: e.target.value })}
-                    className="col-span-2 px-3 py-2.5 rounded-md text-sm outline-none" style={{ background: "rgba(18,42,32,0.05)", color: T.ivory, border: `1px solid ${T.line}` }}>
-                    {ROLES.map((r) => <option key={r} value={r} style={{ background: T.inkDeep, color: T.clair }}>{ROLE_LABELS[r]}</option>)}
+                    className="col-span-2 px-3 py-2.5 rounded-md text-sm outline-none" style={{ background: "rgba(246,239,221,0.05)", color: T.ivory, border: `1px solid ${T.line}` }}>
+                    {ROLES.map((r) => <option key={r} value={r} style={{ background: T.inkDeep }}>{ROLE_LABELS[r]}</option>)}
                   </select>
                 </div>
                 <button type="submit" disabled={envoiEmploye} className="flex items-center gap-1.5 px-4 py-2 rounded-md text-sm font-semibold"
-                  style={{ background: T.mint, color: T.inkDeep, opacity: envoiEmploye ? 0.6 : 1 }}>
+                  style={{ background: T.gold, color: T.inkDeep, opacity: envoiEmploye ? 0.6 : 1 }}>
                   <Plus size={14} /> {envoiEmploye ? "Ajout…" : "Ajouter"}
                 </button>
               </form>
@@ -672,7 +642,7 @@ export default function DashboardSalon() {
                 {employes.map((e) => {
                   const estProprietaire = e.utilisateur === salon.proprietaire;
                   return (
-                    <div key={e.id} className="rounded-md p-3" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}`, opacity: e.actif ? 1 : 0.5 }}>
+                    <div key={e.id} className="rounded-md p-3" style={{ background: "rgba(246,239,221,0.04)", border: `1px solid ${T.line}`, opacity: e.actif ? 1 : 0.5 }}>
                       <div className="flex items-center justify-between gap-2 flex-wrap">
                         <span className="text-sm" style={{ color: T.ivory }}>
                           {e.nom_complet}
@@ -680,17 +650,17 @@ export default function DashboardSalon() {
                           {!e.actif && <span className="text-[10px] ml-1.5" style={{ color: T.coral }}>(retiré du salon)</span>}
                         </span>
                         {estProprietaire ? (
-                          <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: "rgba(30,158,100,0.12)", color: T.mint }}>{ROLE_LABELS[e.role] || e.role}</span>
+                          <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: "rgba(127,214,194,0.12)", color: T.mint }}>{ROLE_LABELS[e.role] || e.role}</span>
                         ) : (
                           <div className="flex items-center gap-2">
                             {/* Changer le rôle de l'employé (point 2) */}
                             <select value={e.role} onChange={(ev) => changerRole(e, ev.target.value)} disabled={envoiManager === e.id}
-                              className="text-xs px-2 py-1 rounded-md outline-none" style={{ background: "rgba(18,42,32,0.05)", color: T.ivory, border: `1px solid ${T.line}` }}>
-                              {ROLES.map((r) => <option key={r} value={r} style={{ background: T.inkDeep, color: T.clair }}>{ROLE_LABELS[r]}</option>)}
+                              className="text-xs px-2 py-1 rounded-md outline-none" style={{ background: "rgba(246,239,221,0.05)", color: T.ivory, border: `1px solid ${T.line}` }}>
+                              {ROLES.map((r) => <option key={r} value={r} style={{ background: T.inkDeep }}>{ROLE_LABELS[r]}</option>)}
                             </select>
                             {/* Retirer / réintégrer l'employé du salon (point 2) */}
                             <button onClick={() => basculerActifEmploye(e)} disabled={envoiManager === e.id}
-                              className="text-[11px] px-2 py-1 rounded-md" style={{ background: e.actif ? "rgba(217,80,60,0.12)" : "rgba(30,158,100,0.12)", color: e.actif ? T.coral : T.mint, opacity: envoiManager === e.id ? 0.5 : 1 }}
+                              className="text-[11px] px-2 py-1 rounded-md" style={{ background: e.actif ? "rgba(255,122,92,0.12)" : "rgba(127,214,194,0.12)", color: e.actif ? T.coral : T.mint, opacity: envoiManager === e.id ? 0.5 : 1 }}
                               title={e.actif ? "Retirer cet employé du salon" : "Réintégrer cet employé"}>
                               {e.actif ? "Retirer" : "Réintégrer"}
                             </button>
@@ -701,9 +671,9 @@ export default function DashboardSalon() {
                       {/* Droits granulaires sur les tickets — uniquement pour les co-managers (point 4) */}
                       {!estProprietaire && e.role === "gestionnaire" && (
                         <div className="flex flex-wrap items-center gap-3 mt-2.5 pt-2.5" style={{ borderTop: `1px dashed ${T.line}` }}>
-                          <span className="text-[10px] uppercase tracking-wide" style={{ color: "rgba(18,42,32,0.4)" }}>Tâches autorisées :</span>
+                          <span className="text-[10px] uppercase tracking-wide" style={{ color: "rgba(246,239,221,0.4)" }}>Tâches autorisées :</span>
                           {[["peut_creer_ticket", "Créer un ticket"], ["peut_confirmer_ticket", "Confirmer un soin"], ["peut_valider_ticket", "Valider un paiement"]].map(([cle, label]) => (
-                            <label key={cle} className="flex items-center gap-1.5 text-[11px]" style={{ color: "rgba(18,42,32,0.65)" }}>
+                            <label key={cle} className="flex items-center gap-1.5 text-[11px]" style={{ color: "rgba(246,239,221,0.65)" }}>
                               <input type="checkbox" checked={!!e[cle]} onChange={() => basculerPermissionTicket(e, cle)} style={{ accentColor: T.gold }} />
                               {label}
                             </label>
@@ -713,32 +683,32 @@ export default function DashboardSalon() {
                     </div>
                   );
                 })}
-                {employes.length === 0 && <p className="text-sm" style={{ color: "rgba(18,42,32,0.4)" }}>Aucun employé pour le moment.</p>}
+                {employes.length === 0 && <p className="text-sm" style={{ color: "rgba(246,239,221,0.4)" }}>Aucun employé pour le moment.</p>}
               </div>
             </div>
           )}
 
           {salon && vue === "produits" && (
             <div className="space-y-6">
-              <form onSubmit={soumettreProduit} className="rounded-lg p-5 space-y-3" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
-                <h3 style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.titre }}>Ajouter un produit</h3>
+              <form onSubmit={soumettreProduit} className="rounded-lg p-5 space-y-3" style={{ background: "rgba(246,239,221,0.04)", border: `1px solid ${T.line}` }}>
+                <h3 style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.ivory }}>Ajouter un produit</h3>
                 <Erreur message={erreurProduit} />
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   <input required value={formProduit.nom} onChange={(e) => setFormProduit({ ...formProduit, nom: e.target.value })}
-                    placeholder="Nom du produit" className="col-span-2 px-3 py-2.5 rounded-md text-sm outline-none" style={{ background: "rgba(18,42,32,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
+                    placeholder="Nom du produit" className="col-span-2 px-3 py-2.5 rounded-md text-sm outline-none" style={{ background: "rgba(246,239,221,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
                   <select value={formProduit.categorie} onChange={(e) => setFormProduit({ ...formProduit, categorie: e.target.value })}
-                    className="px-3 py-2.5 rounded-md text-sm outline-none" style={{ background: "rgba(18,42,32,0.05)", color: T.ivory, border: `1px solid ${T.line}` }}>
-                    {CATEGORIES_PRODUIT.map(([k, l]) => <option key={k} value={k} style={{ background: T.inkDeep, color: T.clair }}>{l}</option>)}
+                    className="px-3 py-2.5 rounded-md text-sm outline-none" style={{ background: "rgba(246,239,221,0.05)", color: T.ivory, border: `1px solid ${T.line}` }}>
+                    {CATEGORIES_PRODUIT.map(([k, l]) => <option key={k} value={k} style={{ background: T.inkDeep }}>{l}</option>)}
                   </select>
                   <input required type="number" min="0" value={formProduit.prix_unitaire_achat} onChange={(e) => setFormProduit({ ...formProduit, prix_unitaire_achat: e.target.value })}
-                    placeholder="Prix d'achat (FCFA)" className="px-3 py-2.5 rounded-md text-sm outline-none" style={{ background: "rgba(18,42,32,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
+                    placeholder="Prix d'achat (FCFA)" className="px-3 py-2.5 rounded-md text-sm outline-none" style={{ background: "rgba(246,239,221,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
                   <input type="number" min="0" value={formProduit.quantite_stock} onChange={(e) => setFormProduit({ ...formProduit, quantite_stock: e.target.value })}
-                    placeholder="Quantité initiale" className="px-3 py-2.5 rounded-md text-sm outline-none" style={{ background: "rgba(18,42,32,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
+                    placeholder="Quantité initiale" className="px-3 py-2.5 rounded-md text-sm outline-none" style={{ background: "rgba(246,239,221,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
                   <input type="number" min="0" value={formProduit.seuil_alerte} onChange={(e) => setFormProduit({ ...formProduit, seuil_alerte: e.target.value })}
-                    placeholder="Seuil d'alerte" className="px-3 py-2.5 rounded-md text-sm outline-none" style={{ background: "rgba(18,42,32,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
+                    placeholder="Seuil d'alerte" className="px-3 py-2.5 rounded-md text-sm outline-none" style={{ background: "rgba(246,239,221,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
                 </div>
                 <button type="submit" disabled={envoiProduit} className="flex items-center gap-1.5 px-4 py-2 rounded-md text-sm font-semibold"
-                  style={{ background: T.mint, color: T.inkDeep, opacity: envoiProduit ? 0.6 : 1 }}>
+                  style={{ background: T.gold, color: T.inkDeep, opacity: envoiProduit ? 0.6 : 1 }}>
                   <Plus size={14} /> {envoiProduit ? "Ajout…" : "Ajouter au stock"}
                 </button>
               </form>
@@ -748,23 +718,23 @@ export default function DashboardSalon() {
                 if (produitsCategorie.length === 0) return null;
                 return (
                   <div key={cle}>
-                    <h3 className="mb-3" style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.titre }}>{libelle}</h3>
+                    <h3 className="mb-3" style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.ivory }}>{libelle}</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {produitsCategorie.map((p) => (
-                        <div key={p.id} className="rounded-lg p-4" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
+                        <div key={p.id} className="rounded-lg p-4" style={{ background: "rgba(246,239,221,0.04)", border: `1px solid ${T.line}` }}>
                           <div className="flex items-center justify-between mb-2">
                             <span className="text-sm" style={{ color: T.ivory }}>{p.nom}</span>
                             <span className="flex items-center gap-1.5 text-xs font-mono">
                               {p.en_alerte_stock ? <AlertTriangle size={13} style={{ color: T.coral }} /> : <CheckCircle2 size={13} style={{ color: T.mint }} />}
-                              <span style={{ color: p.en_alerte_stock ? T.coral : "rgba(18,42,32,0.6)" }}>{p.quantite_stock} en stock</span>
+                              <span style={{ color: p.en_alerte_stock ? T.coral : "rgba(246,239,221,0.6)" }}>{p.quantite_stock} en stock</span>
                             </span>
                           </div>
                           <div className="flex items-center gap-2">
                             <input type="number" min="1" placeholder="Qté à ajouter" value={ravitaillement[p.id] || ""}
                               onChange={(e) => setRavitaillement({ ...ravitaillement, [p.id]: e.target.value })}
-                              className="flex-1 px-2.5 py-1.5 rounded-md text-xs outline-none" style={{ background: "rgba(18,42,32,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
+                              className="flex-1 px-2.5 py-1.5 rounded-md text-xs outline-none" style={{ background: "rgba(246,239,221,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
                             <button onClick={() => ravitailler(p)} className="flex items-center gap-1 text-[11px] px-2.5 py-1.5 rounded-md font-medium shrink-0"
-                              style={{ background: "rgba(30,158,100,0.15)", color: T.mint }}>
+                              style={{ background: "rgba(127,214,194,0.15)", color: T.mint }}>
                               <PackagePlus size={12} /> Ravitailler
                             </button>
                           </div>
@@ -774,38 +744,38 @@ export default function DashboardSalon() {
                   </div>
                 );
               })}
-              {produits.length === 0 && <p className="text-sm" style={{ color: "rgba(18,42,32,0.4)" }}>Aucun produit enregistré.</p>}
+              {produits.length === 0 && <p className="text-sm" style={{ color: "rgba(246,239,221,0.4)" }}>Aucun produit enregistré.</p>}
             </div>
           )}
 
           {salon && vue === "avis" && (
             <div className="space-y-3 max-w-lg">
               {avis.map((a) => (
-                <div key={a.id} className="rounded-lg p-4" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
+                <div key={a.id} className="rounded-lg p-4" style={{ background: "rgba(246,239,221,0.04)", border: `1px solid ${T.line}` }}>
                   <div className="flex items-center gap-1 mb-1.5">
                     {Array.from({ length: 5 }).map((_, i) => (
                       <Star key={i} size={12} fill={i < a.note ? T.gold : "none"} style={{ color: T.gold }} />
                     ))}
                   </div>
-                  {a.commentaire && <p className="text-sm" style={{ color: "rgba(18,42,32,0.8)" }}>"{a.commentaire}"</p>}
+                  {a.commentaire && <p className="text-sm" style={{ color: "rgba(246,239,221,0.8)" }}>"{a.commentaire}"</p>}
                 </div>
               ))}
-              {avis.length === 0 && <p className="text-sm" style={{ color: "rgba(18,42,32,0.4)" }}>Aucun avis pour le moment.</p>}
+              {avis.length === 0 && <p className="text-sm" style={{ color: "rgba(246,239,221,0.4)" }}>Aucun avis pour le moment.</p>}
             </div>
           )}
 
           {salon && vue === "abonnement" && (
             <div className="max-w-lg space-y-4">
-              <div className="rounded-lg p-5" style={{ background: T.inkDeep, border: `1px solid rgba(245,241,232,0.15)` }}>
+              <div className="rounded-lg p-5" style={{ background: T.inkDeep, border: `1px solid ${T.line}` }}>
                 <div className="flex items-center justify-between mb-1">
-                  <h3 style={{ fontFamily: "Fraunces, serif", fontSize: 18, color: T.clair }}>État de l'abonnement</h3>
+                  <h3 style={{ fontFamily: "Fraunces, serif", fontSize: 18, color: T.ivory }}>État de l'abonnement</h3>
                   <span className="text-[10px] uppercase tracking-widest px-2 py-1 rounded-full"
-                    style={{ background: abonnementActif ? "rgba(30,158,100,0.15)" : "rgba(217,80,60,0.15)", color: abonnementActif ? T.mint : T.coral }}>
+                    style={{ background: abonnementActif ? "rgba(127,214,194,0.15)" : "rgba(255,122,92,0.15)", color: abonnementActif ? T.mint : T.coral }}>
                     {abonnementActif ? (abonnementActif.est_essai ? "Essai gratuit actif" : "Actif") : "Aucun abonnement actif"}
                   </span>
                 </div>
                 {abonnementActif && (
-                  <p className="text-sm mt-2" style={{ color: "rgba(245,241,232,0.7)" }}>
+                  <p className="text-sm mt-2" style={{ color: "rgba(246,239,221,0.6)" }}>
                     Expire le {new Date(abonnementActif.date_fin).toLocaleDateString("fr-FR")}
                   </p>
                 )}
@@ -821,13 +791,13 @@ export default function DashboardSalon() {
                 </button>
               )}
 
-              <div className="rounded-lg p-5" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
-                <h3 className="mb-3" style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.titre }}>Renouveler / souscrire</h3>
+              <div className="rounded-lg p-5" style={{ background: "rgba(246,239,221,0.04)", border: `1px solid ${T.line}` }}>
+                <h3 className="mb-3" style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.ivory }}>Renouveler / souscrire</h3>
                 <div className="flex gap-2 mb-3">
                   {[3, 6, 12].map((m) => (
                     <button key={m} onClick={() => setDuree(m)}
                       className="flex-1 py-2 rounded-md text-sm"
-                      style={{ background: duree === m ? T.gold : "rgba(18,42,32,0.05)", color: duree === m ? T.inkDeep : "rgba(18,42,32,0.7)", border: `1px solid ${duree === m ? T.gold : T.line}` }}>
+                      style={{ background: duree === m ? T.gold : "rgba(246,239,221,0.05)", color: duree === m ? T.inkDeep : "rgba(246,239,221,0.7)", border: `1px solid ${duree === m ? T.gold : T.line}` }}>
                       {m} mois
                     </button>
                   ))}
@@ -836,40 +806,14 @@ export default function DashboardSalon() {
                   {[["orange_money", "Orange Money", Smartphone], ["mtn_momo", "MTN MoMo", Smartphone], ["carte_bancaire", "Carte", CardIcon]].map(([k, l, Icon]) => (
                     <button key={k} onClick={() => setModePaiement(k)}
                       className="flex flex-col items-center gap-1 py-2.5 rounded-md text-xs"
-                      style={{ background: modePaiement === k ? T.gold : "rgba(18,42,32,0.05)", color: modePaiement === k ? T.inkDeep : "rgba(18,42,32,0.7)", border: `1px solid ${T.line}` }}>
+                      style={{ background: modePaiement === k ? T.gold : "rgba(246,239,221,0.05)", color: modePaiement === k ? T.inkDeep : "rgba(246,239,221,0.7)", border: `1px solid ${T.line}` }}>
                       <Icon size={14} /> {l}
                     </button>
                   ))}
                 </div>
-                <input value={codePromoRenouvellement} onChange={(e) => setCodePromoRenouvellement(e.target.value.toUpperCase())}
-                  placeholder="Code de réduction ou de parrainage (optionnel)"
-                  className="w-full mb-3 px-3 py-2 rounded-md text-sm outline-none" style={{ background: "rgba(18,42,32,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
-
-                {apercuAbo && (
-                  <div className="rounded-md p-3 space-y-1.5 mb-3" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
-                    <div className="flex justify-between text-xs">
-                      <span style={{ color: "rgba(18,42,32,0.55)" }}>Prix normal</span>
-                      <span className="font-mono" style={{ color: "rgba(18,42,32,0.7)" }}>{apercuAbo.prix_normal.toLocaleString()} FCFA</span>
-                    </div>
-                    {apercuAbo.reduction > 0 && (
-                      <div className="flex justify-between text-xs">
-                        <span style={{ color: T.mint }}>Réduction ({duree} mois)</span>
-                        <span className="font-mono" style={{ color: T.mint }}>-{apercuAbo.reduction.toLocaleString()} FCFA</span>
-                      </div>
-                    )}
-                    <div className="flex justify-between text-sm pt-1.5" style={{ borderTop: `1px dashed ${T.line}` }}>
-                      <span style={{ color: T.ivory }}>Prix final</span>
-                      <span className="font-mono font-semibold" style={{ color: T.gold }}>{apercuAbo.prix_final.toLocaleString()} FCFA</span>
-                    </div>
-                    {codePromoRenouvellement && !apercuAbo.code_valide && apercuAbo.erreur_code && (
-                      <p className="text-[11px] pt-1" style={{ color: T.coral }}>{apercuAbo.erreur_code}</p>
-                    )}
-                  </div>
-                )}
-
                 <button onClick={renouveler} disabled={envoiAbonnement}
-                  className="w-full py-2.5 rounded-md text-sm font-semibold" style={{ background: T.mint, color: T.inkDeep, opacity: envoiAbonnement ? 0.6 : 1 }}>
-                  {envoiAbonnement ? "Traitement…" : `Payer ${(apercuAbo?.prix_final ?? duree * 1800).toLocaleString()} FCFA`}
+                  className="w-full py-2.5 rounded-md text-sm font-semibold" style={{ background: T.gold, color: T.inkDeep, opacity: envoiAbonnement ? 0.6 : 1 }}>
+                  {envoiAbonnement ? "Traitement…" : `Payer ${(duree * 1800).toLocaleString()} FCFA`}
                 </button>
               </div>
             </div>

@@ -75,21 +75,21 @@ export default function PanneauPartenaire({ ouvert, onFermer }) {
   const codesActifs = codes.filter((c) => c.statut === "actif");
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "rgba(15,61,46,0.55)" }}>
-      <div className="w-full max-w-md rounded-lg p-6" style={{ background: T.inkDeep, border: `1px solid rgba(245,241,232,0.15)` }}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "rgba(8,43,41,0.7)" }}>
+      <div className="w-full max-w-md rounded-lg p-6" style={{ background: T.inkDeep, border: `1px solid ${T.line}` }}>
         <div className="flex items-center justify-between mb-1">
-          <h3 style={{ fontFamily: "Fraunces, serif", fontSize: 18, color: T.clair }}>Programme partenaire</h3>
-          <button onClick={onFermer}><X size={18} style={{ color: "rgba(245,241,232,0.5)" }} /></button>
+          <h3 style={{ fontFamily: "Fraunces, serif", fontSize: 18, color: T.ivory }}>Programme partenaire</h3>
+          <button onClick={onFermer}><X size={18} style={{ color: "rgba(246,239,221,0.5)" }} /></button>
         </div>
-        <p className="text-xs mb-4" style={{ color: "rgba(245,241,232,0.55)" }}>
+        <p className="text-xs mb-4" style={{ color: "rgba(246,239,221,0.55)" }}>
           Achetez un code personnel à 500 FCFA, partagez-le : vous gagnez 200 FCFA à chaque nouvelle souscription de salon utilisant votre code.
         </p>
         <Erreur message={erreur} />
 
         {codeEnAttente ? (
-          <div className="rounded-md p-4 mb-5" style={{ background: "rgba(201,147,42,0.08)", border: `1px solid rgba(201,147,42,0.3)` }}>
+          <div className="rounded-md p-4 mb-5" style={{ background: "rgba(232,184,75,0.08)", border: `1px solid rgba(232,184,75,0.3)` }}>
             <p className="text-xs mb-1" style={{ color: T.gold }}>Code réservé, en attente de paiement</p>
-            <p className="font-mono text-lg mb-3" style={{ color: T.clair }}>{codeEnAttente.code}</p>
+            <p className="font-mono text-lg mb-3" style={{ color: T.ivory }}>{codeEnAttente.code}</p>
             <button onClick={confirmerPaiement} disabled={envoi} className="w-full py-2.5 rounded-md text-sm font-semibold flex items-center justify-center gap-2"
               style={{ background: T.mint, color: T.inkDeep, opacity: envoi ? 0.6 : 1 }}>
               <CheckCircle2 size={15} /> {envoi ? "Confirmation…" : `Confirmer le paiement (${MODES.find((m) => m.key === codeEnAttente.mode_paiement)?.label || codeEnAttente.mode_paiement})`}
@@ -99,18 +99,18 @@ export default function PanneauPartenaire({ ouvert, onFermer }) {
           <form onSubmit={demander} className="space-y-3 mb-5">
             <input value={nomCode} onChange={(e) => setNomCode(e.target.value)}
               placeholder="Nom de votre code (optionnel, ex. PROMO-MARIE)"
-              className="w-full px-3 py-2.5 rounded-md text-sm outline-none" style={{ background: "rgba(245,241,232,0.05)", color: T.clair, border: `1px solid rgba(245,241,232,0.15)` }} />
+              className="w-full px-3 py-2.5 rounded-md text-sm outline-none" style={{ background: "rgba(246,239,221,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
             <div className="grid grid-cols-3 gap-2">
               {MODES.map((m) => (
                 <button type="button" key={m.key} onClick={() => setModePaiement(m.key)}
                   className="flex flex-col items-center gap-1.5 py-2.5 rounded-md text-[11px]"
-                  style={{ background: modePaiement === m.key ? T.gold : "rgba(245,241,232,0.05)", color: modePaiement === m.key ? T.inkDeep : "rgba(245,241,232,0.7)", border: `1px solid rgba(245,241,232,0.15)` }}>
+                  style={{ background: modePaiement === m.key ? T.gold : "rgba(246,239,221,0.05)", color: modePaiement === m.key ? T.inkDeep : "rgba(246,239,221,0.7)", border: `1px solid ${T.line}` }}>
                   <m.icon size={14} /> {m.label}
                 </button>
               ))}
             </div>
             <button type="submit" disabled={envoi || !modePaiement} className="w-full py-2.5 rounded-md text-sm font-semibold"
-              style={{ background: T.mint, color: T.inkDeep, opacity: (envoi || !modePaiement) ? 0.5 : 1 }}>
+              style={{ background: T.gold, color: T.inkDeep, opacity: (envoi || !modePaiement) ? 0.5 : 1 }}>
               {envoi ? "Demande…" : "Réserver mon code (500 FCFA)"}
             </button>
           </form>
@@ -118,18 +118,18 @@ export default function PanneauPartenaire({ ouvert, onFermer }) {
 
         <div className="space-y-2">
           {codesActifs.map((c) => (
-            <div key={c.id} className="flex items-center justify-between p-3 rounded-md" style={{ background: "rgba(245,241,232,0.04)" }}>
+            <div key={c.id} className="flex items-center justify-between p-3 rounded-md" style={{ background: "rgba(246,239,221,0.04)" }}>
               <div className="flex items-center gap-2">
                 <span className="font-mono text-sm" style={{ color: T.gold }}>{c.code}</span>
-                <button onClick={() => navigator.clipboard?.writeText(c.code)}><Copy size={12} style={{ color: "rgba(245,241,232,0.4)" }} /></button>
+                <button onClick={() => navigator.clipboard?.writeText(c.code)}><Copy size={12} style={{ color: "rgba(246,239,221,0.4)" }} /></button>
               </div>
               <div className="text-right">
-                <p className="text-[11px]" style={{ color: "rgba(245,241,232,0.5)" }}>{c.nombre_utilisations || 0} utilisation(s)</p>
+                <p className="text-[11px]" style={{ color: "rgba(246,239,221,0.5)" }}>{c.nombre_utilisations || 0} utilisation(s)</p>
                 <p className="font-mono text-xs" style={{ color: T.mint }}>{((c.nombre_utilisations || 0) * 200).toLocaleString()} FCFA gagnés</p>
               </div>
             </div>
           ))}
-          {codesActifs.length === 0 && !codeEnAttente && <p className="text-xs text-center py-4" style={{ color: "rgba(245,241,232,0.35)" }}>Aucun code actif pour le moment.</p>}
+          {codesActifs.length === 0 && !codeEnAttente && <p className="text-xs text-center py-4" style={{ color: "rgba(246,239,221,0.35)" }}>Aucun code actif pour le moment.</p>}
         </div>
       </div>
     </div>

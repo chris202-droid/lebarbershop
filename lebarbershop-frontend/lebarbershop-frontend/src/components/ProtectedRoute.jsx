@@ -31,7 +31,7 @@ export default function ProtectedRoute({ children, role, roles }) {
   if (chargementAuth || chargementRole) {
     return (
       <div className="w-full min-h-screen flex items-center justify-center" style={{ background: T.ink }}>
-        <span className="text-sm" style={{ color: "rgba(18,42,32,0.5)" }}>Chargement…</span>
+        <span className="text-sm" style={{ color: "rgba(246,239,221,0.5)" }}>Chargement…</span>
       </div>
     );
   }

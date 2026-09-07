@@ -30,24 +30,24 @@ export default function UserMenu() {
   return (
     <div className="relative" ref={ref}>
       <button onClick={() => setOuvert(!ouvert)} className="flex items-center gap-2 px-2 py-1.5 rounded-md"
-        style={{ background: "rgba(18,42,32,0.05)" }}>
+        style={{ background: "rgba(246,239,221,0.05)" }}>
         {utilisateur.photo_url ? (
           <img src={utilisateur.photo_url} alt={nom} className="w-7 h-7 rounded-full object-cover" />
         ) : (
           <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold"
-            style={{ background: "rgba(201,147,42,0.15)", color: T.gold, fontFamily: "Fraunces, serif" }}>
+            style={{ background: "rgba(232,184,75,0.15)", color: T.gold, fontFamily: "Fraunces, serif" }}>
             {initiales}
           </div>
         )}
-        <span className="text-xs hidden sm:inline" style={{ color: "rgba(18,42,32,0.75)" }}>{nom}</span>
-        <ChevronDown size={13} style={{ color: "rgba(18,42,32,0.5)" }} />
+        <span className="text-xs hidden sm:inline" style={{ color: "rgba(246,239,221,0.75)" }}>{nom}</span>
+        <ChevronDown size={13} style={{ color: "rgba(246,239,221,0.5)" }} />
       </button>
 
       {ouvert && (
         <div className="absolute right-0 top-full mt-2 w-48 rounded-md py-1.5 z-40"
-          style={{ background: T.inkDeep, border: `1px solid rgba(245,241,232,0.15)` }}>
+          style={{ background: T.inkDeep, border: `1px solid ${T.line}` }}>
           <Link to="/profil" onClick={() => setOuvert(false)}
-            className="flex items-center gap-2 px-3.5 py-2 text-sm" style={{ color: "rgba(245,241,232,0.85)" }}>
+            className="flex items-center gap-2 px-3.5 py-2 text-sm" style={{ color: "rgba(246,239,221,0.8)" }}>
             <UserCog size={14} /> Mon profil
           </Link>
           <button onClick={deconnecter}

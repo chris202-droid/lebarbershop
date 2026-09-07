@@ -63,42 +63,42 @@ export default function Public() {
       <div className="px-6 py-6 max-w-5xl mx-auto space-y-10">
         <Erreur message={erreur} />
         <section>
-          <div className="flex items-center gap-2 px-4 py-3 rounded-lg mb-4" style={{ background: "rgba(18,42,32,0.05)", border: `1px solid ${T.line}` }}>
-            <Search size={16} style={{ color: "rgba(18,42,32,0.4)" }} />
+          <div className="flex items-center gap-2 px-4 py-3 rounded-lg mb-4" style={{ background: "rgba(246,239,221,0.05)", border: `1px solid ${T.line}` }}>
+            <Search size={16} style={{ color: "rgba(246,239,221,0.4)" }} />
             <input value={recherche} onChange={(e) => setRecherche(e.target.value)} placeholder="Rechercher un salon par nom…" className="flex-1 bg-transparent outline-none text-sm" style={{ color: T.ivory }} />
           </div>
-          <h2 className="mb-3" style={{ fontFamily: "Fraunces, serif", fontSize: 20, color: T.titre }}>Salons</h2>
+          <h2 className="mb-3" style={{ fontFamily: "Fraunces, serif", fontSize: 20, color: T.ivory }}>Salons</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {filtres.map((s) => (
-              <div key={s.id} className="rounded-lg p-4" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
+              <div key={s.id} className="rounded-lg p-4" style={{ background: "rgba(246,239,221,0.04)", border: `1px solid ${T.line}` }}>
                 <div className="flex items-start justify-between mb-1">
-                  <p style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.titre }}>{s.nom}</p>
+                  <p style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.ivory }}>{s.nom}</p>
                 </div>
-                <div className="flex items-center gap-1.5 text-xs" style={{ color: "rgba(18,42,32,0.5)" }}>
+                <div className="flex items-center gap-1.5 text-xs" style={{ color: "rgba(246,239,221,0.5)" }}>
                   <MapPin size={11} style={{ color: T.mint }} /> {s.secteur_geographique}, {s.ville}
                 </div>
               </div>
             ))}
-            {filtres.length === 0 && <p className="text-sm" style={{ color: "rgba(18,42,32,0.4)" }}>Aucun salon trouvé.</p>}
+            {filtres.length === 0 && <p className="text-sm" style={{ color: "rgba(246,239,221,0.4)" }}>Aucun salon trouvé.</p>}
           </div>
         </section>
 
         <section id="analyse" className="scroll-mt-20">
-          <div className="flex items-center gap-2 mb-1"><Sparkles size={17} style={{ color: T.gold }} /><h2 style={{ fontFamily: "Fraunces, serif", fontSize: 20, color: T.titre }}>Analyse sectorielle</h2></div>
-          <p className="text-sm mb-5" style={{ color: "rgba(18,42,32,0.55)" }}>Identifiez où ouvrir votre prochain salon.</p>
+          <div className="flex items-center gap-2 mb-1"><Sparkles size={17} style={{ color: T.gold }} /><h2 style={{ fontFamily: "Fraunces, serif", fontSize: 20, color: T.ivory }}>Analyse sectorielle</h2></div>
+          <p className="text-sm mb-5" style={{ color: "rgba(246,239,221,0.55)" }}>Identifiez où ouvrir votre prochain salon.</p>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             {[
               { titre: "Secteurs rentables", type: "secteurs_rentables", prix: 20000, accent: T.mint, avantages: ["Secteurs rentables classés", "Secteurs non occupés"] },
               { titre: "Gestion complète", type: "gestion_complete", prix: 25000, accent: T.coral, avantages: ["Standards & matériel", "Rendements par secteur"] },
             ].map((p) => (
-              <div key={p.type} className="rounded-lg p-5" style={{ background: T.inkDeep, border: `1px solid rgba(245,241,232,0.15)` }}>
+              <div key={p.type} className="rounded-lg p-5" style={{ background: T.inkDeep, border: `1px solid ${T.line}` }}>
                 <div className="flex items-center justify-between mb-2">
-                  <h3 style={{ fontFamily: "Fraunces, serif", fontSize: 18, color: T.clair }}>{p.titre}</h3>
+                  <h3 style={{ fontFamily: "Fraunces, serif", fontSize: 18, color: T.ivory }}>{p.titre}</h3>
                   {!debloque && <Lock size={15} style={{ color: p.accent }} />}
                 </div>
                 <div className="space-y-1.5 mb-5">
-                  {p.avantages.map((a) => <div key={a} className="flex items-center gap-2 text-xs" style={{ color: "rgba(245,241,232,0.75)" }}><CheckCircle2 size={12} style={{ color: p.accent }} /> {a}</div>)}
+                  {p.avantages.map((a) => <div key={a} className="flex items-center gap-2 text-xs" style={{ color: "rgba(246,239,221,0.7)" }}><CheckCircle2 size={12} style={{ color: p.accent }} /> {a}</div>)}
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="font-mono text-xl" style={{ color: p.accent }}>{p.prix.toLocaleString()} <span className="text-xs">FCFA</span></span>
@@ -111,14 +111,14 @@ export default function Public() {
           </div>
 
           {debloque && (
-            <div className="mt-5 rounded-lg p-5" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
-              <div className="flex items-center gap-2 mb-4"><TrendingUp size={15} style={{ color: T.mint }} /><h3 style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.titre }}>Nombre de salons par secteur</h3></div>
+            <div className="mt-5 rounded-lg p-5" style={{ background: "rgba(246,239,221,0.04)", border: `1px solid ${T.line}` }}>
+              <div className="flex items-center gap-2 mb-4"><TrendingUp size={15} style={{ color: T.mint }} /><h3 style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.ivory }}>Nombre de salons par secteur</h3></div>
               <ResponsiveContainer width="100%" height={200}>
                 <BarChart data={secteurs} layout="vertical" margin={{ left: 10 }}>
                   <CartesianGrid stroke={T.line} horizontal={false} />
                   <XAxis type="number" hide />
-                  <YAxis type="category" dataKey="secteur_geographique" stroke="rgba(18,42,32,0.5)" fontSize={12} tickLine={false} axisLine={false} width={90} />
-                  <Tooltip contentStyle={{ background: "#FFFFFF", border: `1px solid ${T.line}`, borderRadius: 6, fontSize: 12, boxShadow: "0 4px 16px rgba(18,42,32,0.12)" }} labelStyle={{ color: T.ivory }} />
+                  <YAxis type="category" dataKey="secteur_geographique" stroke="rgba(246,239,221,0.5)" fontSize={12} tickLine={false} axisLine={false} width={90} />
+                  <Tooltip contentStyle={{ background: T.inkDeep, border: `1px solid ${T.line}`, borderRadius: 6, fontSize: 12 }} />
                   <Bar dataKey="nombre_salons" fill={T.mint} radius={[0, 4, 4, 0]} />
                 </BarChart>
               </ResponsiveContainer>
