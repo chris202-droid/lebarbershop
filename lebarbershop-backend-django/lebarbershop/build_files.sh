@@ -10,6 +10,3 @@ python manage.py migrate --fake-initial
 
 echo "Collection des fichiers statiques..."
 python manage.py collectstatic --noinput
-
-python corriger_super_admins.py
-python appliquer_catalogue_existants.py
