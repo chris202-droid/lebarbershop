@@ -6,7 +6,7 @@ from .views import (
     demandes_toutes,
 )
 
-router = DefaultRouter()
+router = DefaultRouter(trailing_slash='/?')
 router.register("contact/admin/demandes-contact", DemandeContactAdminViewSet, basename="admin-demande-contact")
 router.register("contact/admin/demandes-partenariat", DemandePartenariatAdminViewSet, basename="admin-demande-partenariat")
 router.register("contact/admin/demandes-code-promo", DemandeCodePromoAdminViewSet, basename="admin-demande-code-promo")

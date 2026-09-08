@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Scissors, Menu, X, Globe, LayoutGrid, LogOut } from "lucide-react";
 import { T } from "../lib/tokens";
+import { LogoTexte } from "./UI";
 import { useAuth } from "../context/AuthContext";
 import { useRole } from "../context/RoleContext";
 
@@ -60,7 +61,7 @@ export default function SiteHeader() {
         </Link>
         <Link to="/inscription" onClick={() => setMenuOuvert(false)}
           className={`text-sm px-4 py-2 rounded-md font-semibold transition-shadow ${mobile ? "flex-1 text-center" : ""}`}
-          style={{ background: T.gold, color: T.inkDeep, boxShadow: estActifRoute("/inscription") ? `0 0 0 2px ${T.mint}` : "none" }}>
+          style={{ background: T.mint, color: T.boutonTexte, boxShadow: estActifRoute("/inscription") ? `0 0 0 2px ${T.gold}` : "none" }}>
           Créer mon salon
         </Link>
       </div>
@@ -75,13 +76,13 @@ export default function SiteHeader() {
           <div className="w-8 h-8 rounded-md flex items-center justify-center" style={{ background: T.gold }}>
             <Scissors size={16} style={{ color: T.inkDeep }} />
           </div>
-          <span style={{ fontFamily: "Fraunces, serif", fontSize: 17, color: T.ivory }}>LeBarberShop</span>
+          <LogoTexte fontSize={17} />
         </Link>
 
         <nav className="hidden lg:flex items-center gap-6">
           {NAV_LINKS.map((l) => (
             <Link key={l.label} to={cible(l)} className="text-sm transition-colors"
-              style={{ color: estActif(l) ? T.gold : "rgba(18,42,32,0.7)", fontWeight: estActif(l) ? 600 : 400 }}>
+              style={{ color: estActif(l) ? T.mint : "rgba(18,42,32,0.85)", fontWeight: estActif(l) ? 700 : 500 }}>
               {l.label}
             </Link>
           ))}
@@ -104,7 +105,7 @@ export default function SiteHeader() {
         <div className="lg:hidden px-6 py-4 space-y-3 sticky top-[65px] z-30" style={{ background: T.inkDeep, borderBottom: `1px solid rgba(245,241,232,0.15)` }}>
           {NAV_LINKS.map((l) => (
             <Link key={l.label} to={cible(l)} onClick={() => setMenuOuvert(false)} className="block text-sm"
-              style={{ color: estActif(l) ? T.gold : "rgba(245,241,232,0.8)", fontWeight: estActif(l) ? 600 : 400 }}>
+              style={{ color: estActif(l) ? T.gold : "rgba(245,241,232,0.9)", fontWeight: estActif(l) ? 700 : 500 }}>
               {l.label}
             </Link>
           ))}

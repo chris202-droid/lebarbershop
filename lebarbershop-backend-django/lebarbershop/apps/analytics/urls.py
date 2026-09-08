@@ -2,7 +2,7 @@ from django.urls import path
 from rest_framework.routers import DefaultRouter
 from .views import RendementEmployeViewSet, BilanJournalierViewSet, statistiques_secteur, bilan_financier, bilan_salon
 
-router = DefaultRouter()
+router = DefaultRouter(trailing_slash='/?')
 router.register("rendements-employes", RendementEmployeViewSet, basename="rendement-employe")
 router.register("bilans-journaliers", BilanJournalierViewSet, basename="bilan-journalier")
 

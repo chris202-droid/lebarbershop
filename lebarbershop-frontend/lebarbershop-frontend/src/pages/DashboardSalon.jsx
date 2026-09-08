@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { ResponsiveContainer, AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 import { T } from "../lib/tokens";
-import { NavItem, StatCard, TicketStub, Erreur } from "../components/UI";
+import { NavItem, StatCard, TicketStub, Erreur, LogoTexte } from "../components/UI";
 import { useAuth } from "../context/AuthContext";
 import { listerSalons, modifierSalon, listerAbonnements, creerAbonnement, demarrerEssaiGratuit, apercuAbonnement } from "../api/salons";
 import { listerTickets, validerTicket, creerTicket, listerMesLignesTicket, confirmerLigne, annulerLigne, annulerTicket } from "../api/tickets";
@@ -411,7 +411,7 @@ export default function DashboardSalon() {
           <div className="w-8 h-8 rounded-md flex items-center justify-center" style={{ background: T.gold }}>
             <Scissors size={16} style={{ color: T.inkDeep }} />
           </div>
-          <span style={{ fontFamily: "Fraunces, serif", fontSize: 17, color: T.ivory }}>LeBarberShop</span>
+          <LogoTexte fontSize={17} />
         </Link>
 
         {/* Sélecteur de salon — un gestionnaire peut en posséder plusieurs */}
@@ -421,7 +421,7 @@ export default function DashboardSalon() {
               className="w-full flex items-center justify-between px-3 py-2.5 rounded-md text-left"
               style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
               <div className="min-w-0">
-                <p className="truncate" style={{ color: T.ivory, fontSize: 13, fontFamily: "Fraunces, serif" }}>{salon?.nom}</p>
+                <p className="truncate" style={{ color: T.titre, fontSize: 13, fontFamily: "Fraunces, serif" }}>{salon?.nom}</p>
                 <p className="text-[10px] truncate" style={{ color: "rgba(18,42,32,0.5)" }}>{salon?.secteur_geographique}, {salon?.ville}</p>
               </div>
               <ChevronDown size={14} style={{ color: "rgba(18,42,32,0.5)" }} />
@@ -451,7 +451,7 @@ export default function DashboardSalon() {
 
       <div className="flex-1 flex flex-col min-w-0">
         <header className="flex items-center justify-between px-6 py-4" style={{ borderBottom: `1px solid ${T.line}` }}>
-          <h1 style={{ fontFamily: "Fraunces, serif", fontSize: 22, color: T.ivory }}>{titre}</h1>
+          <h1 style={{ fontFamily: "Fraunces, serif", fontSize: 22, color: T.titre }}>{titre}</h1>
           <UserMenu />
         </header>
 
@@ -460,7 +460,7 @@ export default function DashboardSalon() {
           {!salon && (
             <div>
               <p className="mb-3" style={{ color: "rgba(18,42,32,0.5)" }}>Aucun salon associé à ce compte.</p>
-              <Link to="/onboarding" className="inline-flex items-center gap-1.5 px-4 py-2 rounded-md text-sm font-semibold" style={{ background: T.gold, color: T.inkDeep }}>
+              <Link to="/onboarding" className="inline-flex items-center gap-1.5 px-4 py-2 rounded-md text-sm font-semibold" style={{ background: T.mint, color: T.boutonTexte }}>
                 <Plus size={15} /> Créer mon salon
               </Link>
             </div>
@@ -468,6 +468,15 @@ export default function DashboardSalon() {
 
           {salon && vue === "dashboard" && (
             <>
+              <div className="rounded-lg p-5" style={{ background: "rgba(30,158,100,0.08)", border: `1px solid rgba(30,158,100,0.25)` }}>
+                <p style={{ fontFamily: "Fraunces, serif", fontSize: 20, color: T.titre, fontWeight: 600 }}>
+                  Bienvenue, {utilisateur?.first_name || utilisateur?.username} 👋
+                </p>
+                <p className="text-sm mt-1" style={{ color: "rgba(18,42,32,0.65)" }}>
+                  Voici un aperçu de <strong>{salon.nom}</strong> aujourd'hui.
+                </p>
+              </div>
+
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <StatCard label="Entrées (dernier bilan)" value={courbe.at(-1)?.montant?.toLocaleString() ?? "0"} icon={Wallet} />
                 <StatCard label="Tickets en attente" value={enAttente.length} icon={Clock} />
@@ -475,7 +484,7 @@ export default function DashboardSalon() {
               </div>
 
               <div className="rounded-lg p-5" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
-                <h3 className="mb-4" style={{ fontFamily: "Fraunces, serif", fontSize: 18, color: T.ivory }}>Entrées journalières</h3>
+                <h3 className="mb-4" style={{ fontFamily: "Fraunces, serif", fontSize: 18, color: T.titre }}>Entrées journalières</h3>
                 <ResponsiveContainer width="100%" height={200}>
                   <AreaChart data={courbe}>
                     <defs>
@@ -496,7 +505,7 @@ export default function DashboardSalon() {
 
               <div className="rounded-lg p-5" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
                 <div className="flex items-center gap-2 mb-4"><TrendingUp size={16} style={{ color: T.mint }} />
-                  <h3 style={{ fontFamily: "Fraunces, serif", fontSize: 18, color: T.ivory }}>Rendement par employé (30 derniers jours)</h3>
+                  <h3 style={{ fontFamily: "Fraunces, serif", fontSize: 18, color: T.titre }}>Rendement par employé (30 derniers jours)</h3>
                 </div>
                 <ResponsiveContainer width="100%" height={200}>
                   <BarChart data={rendementsEmployes}>
@@ -512,7 +521,7 @@ export default function DashboardSalon() {
 
               {/* Paramètres du salon : nom modifiable une seule fois, photo */}
               <div className="rounded-lg p-5" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
-                <h3 className="mb-4" style={{ fontFamily: "Fraunces, serif", fontSize: 18, color: T.ivory }}>Paramètres du salon</h3>
+                <h3 className="mb-4" style={{ fontFamily: "Fraunces, serif", fontSize: 18, color: T.titre }}>Paramètres du salon</h3>
                 <form onSubmit={enregistrerParametres} className="space-y-3 max-w-md">
                   <Erreur message={erreurParametres} />
                   {succesParametres && <p className="text-xs" style={{ color: T.mint }}>Modifications enregistrées.</p>}
@@ -547,7 +556,7 @@ export default function DashboardSalon() {
                     <p className="text-[11px] mt-1" style={{ color: "rgba(18,42,32,0.4)" }}>Augmentez ce nombre à tout moment pour recruter davantage.</p>
                   </div>
                   <button type="submit" disabled={envoiParametres} className="px-4 py-2 rounded-md text-sm font-semibold"
-                    style={{ background: T.gold, color: T.inkDeep, opacity: envoiParametres ? 0.6 : 1 }}>
+                    style={{ background: T.mint, color: T.boutonTexte, opacity: envoiParametres ? 0.6 : 1 }}>
                     {envoiParametres ? "Enregistrement…" : "Enregistrer"}
                   </button>
                 </form>
@@ -559,7 +568,7 @@ export default function DashboardSalon() {
             <div className="space-y-6">
               {lignesAConfirmer.length > 0 && (
                 <div>
-                  <h3 className="mb-3" style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.ivory }}>Soins à confirmer</h3>
+                  <h3 className="mb-3" style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.titre }}>Soins à confirmer</h3>
                   <div className="space-y-2">
                     {lignesAConfirmer.map((l) => (
                       <div key={l.id} className="flex items-center justify-between p-3 rounded-md" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
@@ -583,9 +592,9 @@ export default function DashboardSalon() {
 
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <h3 style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.ivory }}>Tickets</h3>
+                  <h3 style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.titre }}>Tickets</h3>
                   {posteManager && (
-                    <button onClick={() => setFormTicketOuvert(!formTicketOuvert)} className="flex items-center gap-1.5 px-3 py-2 rounded-md text-xs font-semibold" style={{ background: T.gold, color: T.inkDeep }}>
+                    <button onClick={() => setFormTicketOuvert(!formTicketOuvert)} className="flex items-center gap-1.5 px-3 py-2 rounded-md text-xs font-semibold" style={{ background: T.mint, color: T.boutonTexte }}>
                       <Plus size={13} /> Nouveau ticket
                     </button>
                   )}
@@ -626,7 +635,7 @@ export default function DashboardSalon() {
                       </div>
                     )}
                     <button type="submit" disabled={envoiTicket || !panierTicket.length} className="w-full py-2.5 rounded-md text-sm font-semibold"
-                      style={{ background: T.mint, color: T.inkDeep, opacity: (envoiTicket || !panierTicket.length) ? 0.5 : 1 }}>
+                      style={{ background: T.mint, color: T.boutonTexte, opacity: (envoiTicket || !panierTicket.length) ? 0.5 : 1 }}>
                       {envoiTicket ? "Ouverture…" : "Ouvrir le ticket"}
                     </button>
                   </form>
@@ -643,7 +652,7 @@ export default function DashboardSalon() {
           {salon && vue === "employes" && (
             <div className="space-y-5">
               <form onSubmit={soumettreEmploye} className="rounded-lg p-5 space-y-3" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
-                <h3 style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.ivory }}>Ajouter un employé</h3>
+                <h3 style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.titre }}>Ajouter un employé</h3>
                 <p className="text-[11px]" style={{ color: "rgba(18,42,32,0.45)" }}>
                   Vous définissez ses identifiants ; il pourra changer ce mot de passe à sa première connexion.
                 </p>
@@ -663,7 +672,7 @@ export default function DashboardSalon() {
                   </select>
                 </div>
                 <button type="submit" disabled={envoiEmploye} className="flex items-center gap-1.5 px-4 py-2 rounded-md text-sm font-semibold"
-                  style={{ background: T.gold, color: T.inkDeep, opacity: envoiEmploye ? 0.6 : 1 }}>
+                  style={{ background: T.mint, color: T.boutonTexte, opacity: envoiEmploye ? 0.6 : 1 }}>
                   <Plus size={14} /> {envoiEmploye ? "Ajout…" : "Ajouter"}
                 </button>
               </form>
@@ -721,7 +730,7 @@ export default function DashboardSalon() {
           {salon && vue === "produits" && (
             <div className="space-y-6">
               <form onSubmit={soumettreProduit} className="rounded-lg p-5 space-y-3" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
-                <h3 style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.ivory }}>Ajouter un produit</h3>
+                <h3 style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.titre }}>Ajouter un produit</h3>
                 <Erreur message={erreurProduit} />
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   <input required value={formProduit.nom} onChange={(e) => setFormProduit({ ...formProduit, nom: e.target.value })}
@@ -738,7 +747,7 @@ export default function DashboardSalon() {
                     placeholder="Seuil d'alerte" className="px-3 py-2.5 rounded-md text-sm outline-none" style={{ background: "rgba(18,42,32,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
                 </div>
                 <button type="submit" disabled={envoiProduit} className="flex items-center gap-1.5 px-4 py-2 rounded-md text-sm font-semibold"
-                  style={{ background: T.gold, color: T.inkDeep, opacity: envoiProduit ? 0.6 : 1 }}>
+                  style={{ background: T.mint, color: T.boutonTexte, opacity: envoiProduit ? 0.6 : 1 }}>
                   <Plus size={14} /> {envoiProduit ? "Ajout…" : "Ajouter au stock"}
                 </button>
               </form>
@@ -748,7 +757,7 @@ export default function DashboardSalon() {
                 if (produitsCategorie.length === 0) return null;
                 return (
                   <div key={cle}>
-                    <h3 className="mb-3" style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.ivory }}>{libelle}</h3>
+                    <h3 className="mb-3" style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.titre }}>{libelle}</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {produitsCategorie.map((p) => (
                         <div key={p.id} className="rounded-lg p-4" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
@@ -816,13 +825,13 @@ export default function DashboardSalon() {
               {!utilisateur?.a_utilise_essai_gratuit && !abonnementActif && (
                 <button onClick={demarrerEssai} disabled={envoiAbonnement}
                   className="w-full flex items-center justify-center gap-2 py-3 rounded-md text-sm font-semibold"
-                  style={{ background: T.mint, color: T.inkDeep, opacity: envoiAbonnement ? 0.6 : 1 }}>
+                  style={{ background: T.mint, color: T.boutonTexte, opacity: envoiAbonnement ? 0.6 : 1 }}>
                   <Sparkles size={15} /> Démarrer l'essai gratuit de 14 jours
                 </button>
               )}
 
               <div className="rounded-lg p-5" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
-                <h3 className="mb-3" style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.ivory }}>Renouveler / souscrire</h3>
+                <h3 className="mb-3" style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.titre }}>Renouveler / souscrire</h3>
                 <div className="flex gap-2 mb-3">
                   {[3, 6, 12].map((m) => (
                     <button key={m} onClick={() => setDuree(m)}
@@ -868,7 +877,7 @@ export default function DashboardSalon() {
                 )}
 
                 <button onClick={renouveler} disabled={envoiAbonnement}
-                  className="w-full py-2.5 rounded-md text-sm font-semibold" style={{ background: T.gold, color: T.inkDeep, opacity: envoiAbonnement ? 0.6 : 1 }}>
+                  className="w-full py-2.5 rounded-md text-sm font-semibold" style={{ background: T.mint, color: T.boutonTexte, opacity: envoiAbonnement ? 0.6 : 1 }}>
                   {envoiAbonnement ? "Traitement…" : `Payer ${(apercuAbo?.prix_final ?? duree * 1800).toLocaleString()} FCFA`}
                 </button>
               </div>

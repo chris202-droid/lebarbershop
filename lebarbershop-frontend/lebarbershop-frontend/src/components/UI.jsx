@@ -1,13 +1,23 @@
 import React from "react";
 import { T } from "../lib/tokens";
 
+export function LogoTexte({ fontSize = 17 }) {
+  return (
+    <span style={{ fontFamily: "Fraunces, serif", fontSize, fontWeight: 700 }}>
+      <span style={{ color: T.mint }}>LeBarber</span>
+      <span style={{ color: T.gold }}>Shop</span>
+    </span>
+  );
+}
+
 export function NavItem({ icon: Icon, label, active, onClick, badge }) {
   return (
     <button onClick={onClick}
-      className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-md transition-colors text-left"
-      style={{ background: active ? "rgba(201,147,42,0.12)" : "transparent", color: active ? T.gold : "rgba(18,42,32,0.65)" }}>
-      <Icon size={17} strokeWidth={2} />
-      <span className="text-[13.5px] font-medium flex-1" style={{ fontFamily: "Manrope, sans-serif" }}>{label}</span>
+      className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-md transition-colors text-left relative"
+      style={{ background: active ? "rgba(30,158,100,0.12)" : "transparent", color: active ? T.mint : "rgba(18,42,32,0.8)" }}>
+      {active && <span className="absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-full" style={{ background: T.mint }} />}
+      <Icon size={17} strokeWidth={active ? 2.5 : 2} />
+      <span className="text-[13.5px] flex-1" style={{ fontFamily: "Manrope, sans-serif", fontWeight: active ? 700 : 600 }}>{label}</span>
       {badge ? (
         <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-full" style={{ background: T.coral, color: T.clair }}>{badge}</span>
       ) : null}
@@ -50,7 +60,7 @@ export function TicketStub({ ticket, onValider, onAnnuler }) {
               {valide ? "Validé" : annule ? "Annulé" : "En attente"}
             </span>
           </div>
-          <p className="mt-1 truncate" style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.ivory }}>
+          <p className="mt-1 truncate" style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.titre }}>
             {ticket.client_nom || ticket.nom_client_temporaire || "Client"}
           </p>
           <p className="text-xs mt-0.5" style={{ color: "rgba(18,42,32,0.55)" }}>
@@ -63,7 +73,7 @@ export function TicketStub({ ticket, onValider, onAnnuler }) {
           {!valide && !annule && (
             <div className="flex items-center gap-1.5 mt-1 justify-end">
               {onValider && (
-                <button onClick={() => onValider(ticket)} className="text-[11px] px-2 py-1 rounded-full" style={{ background: T.gold, color: T.inkDeep }}>
+                <button onClick={() => onValider(ticket)} className="text-[11px] px-2 py-1 rounded-full" style={{ background: T.mint, color: T.boutonTexte }}>
                   Valider
                 </button>
               )}

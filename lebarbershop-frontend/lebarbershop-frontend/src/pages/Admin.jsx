@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Legend } from "recharts";
 import { T } from "../lib/tokens";
-import { NavItem, Erreur } from "../components/UI";
+import { NavItem, Erreur, LogoTexte } from "../components/UI";
 import SiteFooter from "../components/SiteFooter";
 import BoutonWhatsAppFlottant from "../components/BoutonWhatsAppFlottant";
 import UserMenu from "../components/UserMenu";
@@ -230,7 +230,7 @@ function VueSalons() {
               <Champ surFondSombre value={formEdition.nom} onChange={(e) => setFormEdition({ ...formEdition, nom: e.target.value })} placeholder="Nom du salon" />
               <Champ surFondSombre value={formEdition.photo_url} onChange={(e) => setFormEdition({ ...formEdition, photo_url: e.target.value })} placeholder="URL de la photo du salon" />
               <button type="submit" disabled={envoi} className="px-4 py-2 rounded-md text-sm font-semibold"
-                style={{ background: T.gold, color: T.inkDeep, opacity: envoi ? 0.6 : 1 }}>
+                style={{ background: T.mint, color: T.boutonTexte, opacity: envoi ? 0.6 : 1 }}>
                 Enregistrer
               </button>
             </form>
@@ -392,7 +392,7 @@ function VueDemandes() {
                 d.traite ? (
                   <span className="text-[11px] px-2 py-1 rounded-full shrink-0" style={{ background: "rgba(30,158,100,0.15)", color: T.mint }}>Traitée</span>
                 ) : (
-                  <button onClick={() => marquerTraitee(d)} className="text-[11px] px-2.5 py-1.5 rounded-md font-medium shrink-0" style={{ background: T.gold, color: T.inkDeep }}>
+                  <button onClick={() => marquerTraitee(d)} className="text-[11px] px-2.5 py-1.5 rounded-md font-medium shrink-0" style={{ background: T.mint, color: T.boutonTexte }}>
                     Marquer traitée
                   </button>
                 )
@@ -485,7 +485,7 @@ function VueCodes() {
       <Erreur message={erreur} />
       <Carte>
         <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2"><Tag size={16} style={{ color: T.coral }} /><h3 style={{ fontFamily: "Fraunces, serif", fontSize: 17, color: T.ivory }}>Codes de réduction</h3></div>
+          <div className="flex items-center gap-2"><Tag size={16} style={{ color: T.coral }} /><h3 style={{ fontFamily: "Fraunces, serif", fontSize: 17, color: T.titre }}>Codes de réduction</h3></div>
         </div>
         <form onSubmit={ajouterCodeReduction} className="space-y-2 mb-4">
           <Erreur message={erreurCreation} />
@@ -535,7 +535,7 @@ function VueCodes() {
       </Carte>
 
       <Carte>
-        <div className="flex items-center gap-2 mb-4"><Gift size={16} style={{ color: T.mint }} /><h3 style={{ fontFamily: "Fraunces, serif", fontSize: 17, color: T.ivory }}>Partenaires (sponsoring)</h3></div>
+        <div className="flex items-center gap-2 mb-4"><Gift size={16} style={{ color: T.mint }} /><h3 style={{ fontFamily: "Fraunces, serif", fontSize: 17, color: T.titre }}>Partenaires (sponsoring)</h3></div>
         <form onSubmit={ajouterCodeSponsoring} className="space-y-2 mb-3">
           <div className="flex gap-2">
             <Champ required value={nouveauCodeSpons.code} onChange={(e) => setNouveauCodeSpons({ ...nouveauCodeSpons, code: e.target.value })} placeholder="CODE" />
@@ -546,7 +546,7 @@ function VueCodes() {
             <input value={nouveauCodeSpons.montant_reduction_utilisateur} onChange={(e) => setNouveauCodeSpons({ ...nouveauCodeSpons, montant_reduction_utilisateur: e.target.value })}
               placeholder="Réduction accordée (FCFA)" type="number" min="0"
               className="w-44 px-2 py-2 rounded-md text-sm outline-none shrink-0" style={{ background: "rgba(18,42,32,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
-            <button type="submit" className="px-3 rounded-md shrink-0" style={{ background: T.mint, color: T.inkDeep }}><Plus size={14} /></button>
+            <button type="submit" className="px-3 rounded-md shrink-0" style={{ background: T.mint, color: T.boutonTexte }}><Plus size={14} /></button>
           </div>
         </form>
         <div className="space-y-2">
@@ -630,7 +630,7 @@ function VueForfaits() {
     <div className="space-y-5">
       <Erreur message={erreur} />
       <Carte>
-        <h3 className="mb-4" style={{ fontFamily: "Fraunces, serif", fontSize: 17, color: T.ivory }}>Nouveau forfait</h3>
+        <h3 className="mb-4" style={{ fontFamily: "Fraunces, serif", fontSize: 17, color: T.titre }}>Nouveau forfait</h3>
         <form onSubmit={ajouter} className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Champ required value={nouveau.nom} onChange={(e) => setNouveau({ ...nouveau, nom: e.target.value })} placeholder="Nom du forfait" />
           <select value={nouveau.type_forfait} onChange={(e) => setNouveau({ ...nouveau, type_forfait: e.target.value })}
@@ -641,7 +641,7 @@ function VueForfaits() {
           <Champ type="number" value={nouveau.duree_mois} onChange={(e) => setNouveau({ ...nouveau, duree_mois: e.target.value })} placeholder="Durée en mois (optionnel)" />
           <Champ value={nouveau.description} onChange={(e) => setNouveau({ ...nouveau, description: e.target.value })} placeholder="Description courte" className="sm:col-span-2" />
           <Champ value={nouveau.avantages} onChange={(e) => setNouveau({ ...nouveau, avantages: e.target.value })} placeholder="Avantages, séparés par des virgules" className="sm:col-span-2" />
-          <button type="submit" className="sm:col-span-2 px-4 py-2.5 rounded-md text-sm font-semibold" style={{ background: T.gold, color: T.inkDeep }}>
+          <button type="submit" className="sm:col-span-2 px-4 py-2.5 rounded-md text-sm font-semibold" style={{ background: T.mint, color: T.boutonTexte }}>
             Créer le forfait
           </button>
         </form>
@@ -651,7 +651,7 @@ function VueForfaits() {
         {forfaits.map((f) => (
           <Carte key={f.id}>
             <div className="flex items-start justify-between mb-1">
-              <p style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.ivory }}>{f.nom}</p>
+              <p style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.titre }}>{f.nom}</p>
               <span className="text-[10px] uppercase px-1.5 py-0.5 rounded-full" style={{ background: "rgba(201,147,42,0.12)", color: T.gold }}>
                 {TYPES_FORFAIT.find(([k]) => k === f.type_forfait)?.[1] || f.type_forfait}
               </span>
@@ -721,7 +721,7 @@ function VueBilan() {
           </div>
 
           <Carte>
-            <h3 className="mb-4" style={{ fontFamily: "Fraunces, serif", fontSize: 17, color: T.ivory }}>
+            <h3 className="mb-4" style={{ fontFamily: "Fraunces, serif", fontSize: 17, color: T.titre }}>
               Évolution {periode === "mois" ? "mensuelle" : periode === "trimestre" ? "trimestrielle" : periode === "semestre" ? "semestrielle" : "annuelle"}
             </h3>
             <ResponsiveContainer width="100%" height={260}>
@@ -817,7 +817,7 @@ function VueAdministrateurs() {
     <div className="space-y-5 max-w-3xl">
       <Erreur message={erreur} />
       <Carte>
-        <h3 className="mb-1" style={{ fontFamily: "Fraunces, serif", fontSize: 17, color: T.ivory }}>Désigner un administrateur</h3>
+        <h3 className="mb-1" style={{ fontFamily: "Fraunces, serif", fontSize: 17, color: T.titre }}>Désigner un administrateur</h3>
         <p className="text-xs mb-4" style={{ color: "rgba(18,42,32,0.5)" }}>
           Si le nom d'utilisateur saisi existe déjà, ce compte est simplement promu administrateur.
           Sinon, un nouveau compte est créé avec les informations ci-dessous.
@@ -841,7 +841,7 @@ function VueAdministrateurs() {
             ))}
           </div>
           <button type="submit" disabled={envoi} className="px-4 py-2.5 rounded-md text-sm font-semibold"
-            style={{ background: T.gold, color: T.inkDeep, opacity: envoi ? 0.6 : 1 }}>
+            style={{ background: T.mint, color: T.boutonTexte, opacity: envoi ? 0.6 : 1 }}>
             {envoi ? "Envoi…" : "Désigner"}
           </button>
         </form>
@@ -888,7 +888,7 @@ export default function Admin() {
           <Link to="/" className="flex items-center gap-2 px-2 mb-2 mt-1">
             <div className="w-8 h-8 rounded-md flex items-center justify-center" style={{ background: T.gold }}><Shield size={16} style={{ color: T.inkDeep }} /></div>
             <div>
-              <p style={{ fontFamily: "Fraunces, serif", fontSize: 15, color: T.ivory }}>LeBarberShop</p>
+              <p><LogoTexte fontSize={15} /></p>
               <p className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: T.gold }}>Super administrateur</p>
             </div>
           </Link>
@@ -898,7 +898,7 @@ export default function Admin() {
 
         <div className="flex-1 flex flex-col min-w-0">
           <header className="flex items-center justify-between px-6 py-4" style={{ borderBottom: `1px solid ${T.line}` }}>
-            <h1 style={{ fontFamily: "Fraunces, serif", fontSize: 22, color: T.ivory }}>{NAV.find((n) => n.key === vue)?.label}</h1>
+            <h1 style={{ fontFamily: "Fraunces, serif", fontSize: 22, color: T.titre }}>{NAV.find((n) => n.key === vue)?.label}</h1>
             <UserMenu />
           </header>
           <main className="flex-1 overflow-auto p-6">

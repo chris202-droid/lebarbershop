@@ -91,7 +91,7 @@ export default function PanneauPartenaire({ ouvert, onFermer }) {
             <p className="text-xs mb-1" style={{ color: T.gold }}>Code réservé, en attente de paiement</p>
             <p className="font-mono text-lg mb-3" style={{ color: T.clair }}>{codeEnAttente.code}</p>
             <button onClick={confirmerPaiement} disabled={envoi} className="w-full py-2.5 rounded-md text-sm font-semibold flex items-center justify-center gap-2"
-              style={{ background: T.mint, color: T.inkDeep, opacity: envoi ? 0.6 : 1 }}>
+              style={{ background: T.mint, color: T.boutonTexte, opacity: envoi ? 0.6 : 1 }}>
               <CheckCircle2 size={15} /> {envoi ? "Confirmation…" : `Confirmer le paiement (${MODES.find((m) => m.key === codeEnAttente.mode_paiement)?.label || codeEnAttente.mode_paiement})`}
             </button>
           </div>
@@ -110,7 +110,7 @@ export default function PanneauPartenaire({ ouvert, onFermer }) {
               ))}
             </div>
             <button type="submit" disabled={envoi || !modePaiement} className="w-full py-2.5 rounded-md text-sm font-semibold"
-              style={{ background: T.gold, color: T.inkDeep, opacity: (envoi || !modePaiement) ? 0.5 : 1 }}>
+              style={{ background: T.mint, color: T.boutonTexte, opacity: (envoi || !modePaiement) ? 0.5 : 1 }}>
               {envoi ? "Demande…" : "Réserver mon code (500 FCFA)"}
             </button>
           </form>

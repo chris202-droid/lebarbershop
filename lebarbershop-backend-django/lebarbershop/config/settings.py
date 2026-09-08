@@ -9,15 +9,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "changez-moi-en-production")
 DEBUG = os.environ.get("DJANGO_DEBUG", "True") == "True"
-# En production (Vercel) : définir DJANGO_ALLOWED_HOSTS avec le domaine exact
-# du backend, ex. "votre-backend-xxxx.vercel.app" — voir Vercel → Settings →
-# Environment Variables du projet backend.
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "*").split(",")
+# En production (Vercel) : DJANGO_ALLOWED_HOSTS peut rester tel quel si vous
+# gardez exactement ce nom de domaine backend ; sinon, remplacez-le dans les
+# variables d'environnement du projet Vercel (Settings → Environment Variables).
+ALLOWED_HOSTS = os.environ.get(
+    "DJANGO_ALLOWED_HOSTS", "lebarbershopback.vercel.app,localhost,127.0.0.1"
+).split(",")
 
 #supprimer
 GDAL_LIBRARY_PATH = r'D:\kalarai\vkalarai\Lib\site-packages\osgeo\gdal304.dll'
 GEOS_LIBRARY_PATH = r'D:\kalarai\vkalarai\Lib\site-packages\osgeo\geos_c.dll'
 #FIN
+
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -48,6 +51,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "config.middleware.NormaliserSlashFinalMiddleware",  # avant CommonMiddleware/APPEND_SLASH — voir config/middleware.py
     "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -76,14 +80,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "config.wsgi.application"
-
-import os
-from urllib.parse import urlparse
-
-# 1. Récupération de l'URL Neon (Vercel ou chaîne brute par défaut)
- 
-
-
 
 # 2. Découpage manuel de l'URL avec les outils natifs de Python
 db_url = os.environ.get('POSTGRES_URL')
@@ -119,7 +115,6 @@ else:
         },
     }
 }
-
 
 AUTH_USER_MODEL = "accounts.Utilisateur"
 
@@ -185,12 +180,21 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SECURE_HSTS_SECONDS = 31536000 if not DEBUG else 0
 SECURE_HSTS_INCLUDE_SUBDOMAINS = not DEBUG
 
+# Requis par Django (4+) pour accepter les requêtes POST du Django admin
+# (connexion, formulaires) lorsque le site est servi en HTTPS derrière un
+# proxy comme celui de Vercel — sans ça, la connexion à /admin/ échoue avec
+# une erreur "CSRF verification failed" même en visitant le bon domaine.
+CSRF_TRUSTED_ORIGINS = os.environ.get(
+    "CSRF_TRUSTED_ORIGINS", "https://lebarbershopback.vercel.app"
+).split(",")
+
 # En production : définir CORS_ALLOWED_ORIGINS avec le(s) domaine(s) exact(s)
-# du frontend, ex. "https://lebarshop.org,https://www.lebarshop.org"
-# (schéma https:// obligatoire, sans slash final) — voir Vercel → Settings →
+# du frontend (schéma https:// obligatoire, sans slash final) si celui-ci
+# diffère de la valeur par défaut ci-dessous — voir Vercel → Settings →
 # Environment Variables du projet backend.
 CORS_ALLOWED_ORIGINS = os.environ.get(
-    "CORS_ALLOWED_ORIGINS", "http://localhost:8000,http://localhost:5173,http://127.0.0.1:5173"
+    "CORS_ALLOWED_ORIGINS",
+    "https://lebarbershop.org,https://www.lebarbershop.org,http://localhost:8000,http://localhost:5173",
 ).split(",")
 CORS_ALLOW_CREDENTIALS = True
 

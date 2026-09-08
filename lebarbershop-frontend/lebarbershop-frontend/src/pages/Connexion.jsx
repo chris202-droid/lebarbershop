@@ -6,7 +6,7 @@ import { connecter, getProfil } from "../api/auth";
 import { mesPostes } from "../api/employes";
 import { useAuth } from "../context/AuthContext";
 import { calculerRouteParDefaut } from "../context/RoleContext";
-import { Erreur } from "../components/UI";
+import { Erreur, LogoTexte } from "../components/UI";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
 import BoutonWhatsAppFlottant from "../components/BoutonWhatsAppFlottant";
@@ -60,7 +60,7 @@ export default function Connexion() {
             <div className="w-12 h-12 rounded-lg flex items-center justify-center mb-3" style={{ background: T.gold }}>
               <Scissors size={22} style={{ color: T.inkDeep }} />
             </div>
-            <h1 style={{ fontFamily: "Fraunces, serif", fontSize: 26, color: T.ivory }}>LeBarberShop</h1>
+            <h1><LogoTexte fontSize={26} /></h1>
           </div>
 
           <form onSubmit={soumettre} className="rounded-lg p-6 space-y-3.5" style={{ background: "rgba(18,42,32,0.03)", border: `1px solid ${T.line}` }}>
@@ -79,7 +79,7 @@ export default function Connexion() {
             </div>
             <button type="submit" disabled={envoi}
               className="w-full py-2.5 rounded-md text-sm font-semibold flex items-center justify-center gap-2"
-              style={{ background: T.gold, color: T.inkDeep, opacity: envoi ? 0.6 : 1 }}>
+              style={{ background: T.mint, color: T.boutonTexte, opacity: envoi ? 0.6 : 1 }}>
               {envoi ? "Connexion…" : "Se connecter"} <ArrowRight size={15} />
             </button>
             <p className="text-center text-xs" style={{ color: "rgba(18,42,32,0.45)" }}>

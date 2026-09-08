@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 import { T } from "../lib/tokens";
+import { useAuth } from "../context/AuthContext";
 import { Erreur } from "../components/UI";
 import { listerSalons } from "../api/salons";
 import { listerTickets, validerTicket } from "../api/tickets";
@@ -74,7 +75,7 @@ function VueEncaissement({ salon }) {
         <div className="flex items-center gap-2 mb-5 px-1">
           <Wallet size={18} style={{ color: T.gold }} />
           <div>
-            <h2 style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.ivory }}>File d'attente</h2>
+            <h2 style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.titre }}>File d'attente</h2>
             <p className="text-[11px]" style={{ color: "rgba(18,42,32,0.45)" }}>{tickets.length} ticket(s) en attente</p>
           </div>
         </div>
@@ -131,7 +132,7 @@ function VueEncaissement({ salon }) {
 
             <button onClick={encaisser} disabled={!mode}
               className="w-full mt-4 py-3 rounded-md text-sm font-semibold flex items-center justify-center gap-2"
-              style={{ background: T.mint, color: T.inkDeep, opacity: mode ? 1 : 0.4 }}>
+              style={{ background: T.mint, color: T.boutonTexte, opacity: mode ? 1 : 0.4 }}>
               <CheckCircle2 size={16} /> Valider et encaisser
             </button>
           </div>
@@ -187,7 +188,7 @@ function VueBilan({ salon }) {
           </div>
 
           <div className="rounded-lg p-5" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
-            <h3 className="mb-4" style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.ivory }}>Revenus par période</h3>
+            <h3 className="mb-4" style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.titre }}>Revenus par période</h3>
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={donnees.lignes}>
                 <CartesianGrid stroke={T.line} vertical={false} />
@@ -201,7 +202,7 @@ function VueBilan({ salon }) {
           </div>
 
           <div className="rounded-lg p-5" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
-            <h3 className="mb-4" style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.ivory }}>Bilan par employé</h3>
+            <h3 className="mb-4" style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.titre }}>Bilan par employé</h3>
             <div className="space-y-2">
               {donnees.par_employe.map((e) => (
                 <div key={e.employe_id} className="flex items-center justify-between p-2.5 rounded-md" style={{ background: "rgba(18,42,32,0.03)" }}>
@@ -224,6 +225,7 @@ function VueBilan({ salon }) {
 /* ---------------------------------- Shell ---------------------------------- */
 
 export default function Caisse() {
+  const { utilisateur } = useAuth();
   const [salon, setSalon] = useState(null);
   const [vue, setVue] = useState("caisse");
   const [partenaireOuvert, setPartenaireOuvert] = useState(false);
@@ -272,10 +274,15 @@ export default function Caisse() {
         <div className="flex-1 flex flex-col min-w-0">
           <header className="flex items-center justify-between px-6 py-4" style={{ borderBottom: `1px solid ${T.line}` }}>
             <div>
-              <h1 style={{ fontFamily: "Fraunces, serif", fontSize: 20, color: T.ivory }}>{NAV.find((n) => n.key === vue)?.label}</h1>
+              <h1 style={{ fontFamily: "Fraunces, serif", fontSize: 20, color: T.titre }}>{NAV.find((n) => n.key === vue)?.label}</h1>
               {salon && <p className="text-xs mt-0.5" style={{ color: "rgba(18,42,32,0.45)" }}>{salon.nom}</p>}
             </div>
-            <UserMenu />
+            <div className="flex items-center gap-3">
+              <span className="hidden sm:block text-sm" style={{ color: "rgba(18,42,32,0.55)" }}>
+                Bonjour, {utilisateur?.first_name || utilisateur?.username}
+              </span>
+              <UserMenu />
+            </div>
           </header>
           <Erreur message={erreur} />
           {!salon ? (

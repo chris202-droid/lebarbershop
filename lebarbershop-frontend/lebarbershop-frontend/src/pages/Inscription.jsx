@@ -42,10 +42,10 @@ export default function Inscription() {
       <div className="flex-1 flex items-center justify-center p-4">
         <div className="w-full max-w-md">
           <div className="flex flex-col items-center mb-6">
-            <div className="w-12 h-12 rounded-lg flex items-center justify-center mb-3" style={{ background: T.coral }}>
-              <Scissors size={22} style={{ color: T.inkDeep }} />
+            <div className="w-12 h-12 rounded-lg flex items-center justify-center mb-3" style={{ background: T.mint }}>
+              <Scissors size={22} style={{ color: T.boutonTexte }} />
             </div>
-            <h1 style={{ fontFamily: "Fraunces, serif", fontSize: 24, color: T.ivory }}>Créer un compte</h1>
+            <h1 style={{ fontFamily: "Fraunces, serif", fontSize: 24, color: T.titre }}>Créer un compte</h1>
           </div>
 
           <form onSubmit={soumettre} className="rounded-lg p-6 space-y-3" style={{ background: "rgba(18,42,32,0.03)", border: `1px solid ${T.line}` }}>
@@ -67,7 +67,7 @@ export default function Inscription() {
             ))}
             <button type="submit" disabled={envoi}
               className="w-full py-2.5 rounded-md text-sm font-semibold flex items-center justify-center gap-2"
-              style={{ background: T.coral, color: T.inkDeep, opacity: envoi ? 0.6 : 1 }}>
+              style={{ background: T.mint, color: T.boutonTexte, opacity: envoi ? 0.6 : 1 }}>
               {envoi ? "Création…" : "Créer mon compte"} <ArrowRight size={15} />
             </button>
             <p className="text-center text-xs" style={{ color: "rgba(18,42,32,0.45)" }}>

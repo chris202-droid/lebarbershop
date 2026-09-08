@@ -6,7 +6,7 @@ import {
 } from "lucide-react";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 import { T } from "../lib/tokens";
-import { NavItem, Erreur } from "../components/UI";
+import { NavItem, Erreur, LogoTexte } from "../components/UI";
 import SiteFooter from "../components/SiteFooter";
 import BoutonWhatsAppFlottant from "../components/BoutonWhatsAppFlottant";
 import UserMenu from "../components/UserMenu";
@@ -30,7 +30,7 @@ const NAV = [
 
 /* --------------------------- Vue : Tableau de bord --------------------------- */
 
-function VueDashboard({ posteActif }) {
+function VueDashboard({ posteActif, utilisateur }) {
   const [rendements, setRendements] = useState([]);
   const [erreur, setErreur] = useState("");
 
@@ -52,6 +52,16 @@ function VueDashboard({ posteActif }) {
   return (
     <div className="space-y-5">
       <Erreur message={erreur} />
+      <div className="rounded-lg p-5" style={{ background: "rgba(30,158,100,0.08)", border: `1px solid rgba(30,158,100,0.25)` }}>
+        <p style={{ fontFamily: "Fraunces, serif", fontSize: 20, color: T.titre, fontWeight: 600 }}>
+          Bienvenue, {utilisateur?.first_name || utilisateur?.username} 👋
+        </p>
+        {posteActif && (
+          <p className="text-sm mt-1" style={{ color: "rgba(18,42,32,0.65)" }}>
+            Voici vos performances chez <strong>{posteActif.salon_nom}</strong>.
+          </p>
+        )}
+      </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="rounded-lg p-4" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
           <p className="text-[11px] uppercase tracking-widest mb-2" style={{ color: "rgba(18,42,32,0.45)" }}>Soins réalisés</p>
@@ -64,7 +74,7 @@ function VueDashboard({ posteActif }) {
       </div>
 
       <div className="rounded-lg p-5" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
-        <h3 className="mb-4" style={{ fontFamily: "Fraunces, serif", fontSize: 17, color: T.ivory }}>Ma performance</h3>
+        <h3 className="mb-4" style={{ fontFamily: "Fraunces, serif", fontSize: 17, color: T.titre }}>Ma performance</h3>
         <ResponsiveContainer width="100%" height={220}>
           <BarChart data={rendements}>
             <CartesianGrid stroke={T.line} vertical={false} />
@@ -169,7 +179,7 @@ function VueTickets({ posteActif }) {
       {/* Soins qui m'attendent (assignés par la caissière ou un collègue) */}
       {mesLignes.length > 0 && (
         <div>
-          <h3 className="mb-3" style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.ivory }}>Soins à confirmer</h3>
+          <h3 className="mb-3" style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.titre }}>Soins à confirmer</h3>
           <div className="space-y-2">
             {mesLignes.map((l) => (
               <div key={l.id} className="flex items-center justify-between p-3 rounded-md" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
@@ -194,8 +204,8 @@ function VueTickets({ posteActif }) {
       {/* Mes tickets ouverts, en attente de passage en caisse */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h3 style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.ivory }}>Mes tickets en attente de caisse</h3>
-          <button onClick={() => setFormOuvert(!formOuvert)} className="flex items-center gap-1.5 px-3 py-2 rounded-md text-xs font-semibold" style={{ background: T.gold, color: T.inkDeep }}>
+          <h3 style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.titre }}>Mes tickets en attente de caisse</h3>
+          <button onClick={() => setFormOuvert(!formOuvert)} className="flex items-center gap-1.5 px-3 py-2 rounded-md text-xs font-semibold" style={{ background: T.mint, color: T.boutonTexte }}>
             <Plus size={13} /> Nouveau ticket
           </button>
         </div>
@@ -233,7 +243,7 @@ function VueTickets({ posteActif }) {
               </div>
             )}
             <button type="submit" disabled={envoi || !panier.length} className="w-full py-2.5 rounded-md text-sm font-semibold"
-              style={{ background: T.mint, color: T.inkDeep, opacity: (envoi || !panier.length) ? 0.5 : 1 }}>
+              style={{ background: T.mint, color: T.boutonTexte, opacity: (envoi || !panier.length) ? 0.5 : 1 }}>
               Ouvrir le ticket
             </button>
           </form>
@@ -361,14 +371,14 @@ export default function EspaceEmploye() {
             <div className="w-8 h-8 rounded-md flex items-center justify-center" style={{ background: T.gold }}>
               <Scissors size={16} style={{ color: T.inkDeep }} />
             </div>
-            <span style={{ fontFamily: "Fraunces, serif", fontSize: 17, color: T.ivory }}>LeBarberShop</span>
+            <LogoTexte fontSize={17} />
           </Link>
 
           {/* Nom du salon auquel l'employé appartient (point 2) */}
           {posteActif && (
             <div className="mb-6 mt-2 rounded-md p-3" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
               <p className="text-[10px] uppercase tracking-wide" style={{ color: "rgba(18,42,32,0.4)" }}>Mon salon</p>
-              <p style={{ color: T.ivory, fontSize: 14, fontFamily: "Fraunces, serif" }}>{posteActif.salon_nom}</p>
+              <p style={{ color: T.titre, fontSize: 14, fontFamily: "Fraunces, serif" }}>{posteActif.salon_nom}</p>
               <p className="text-[11px] mt-0.5" style={{ color: T.mint }}>{posteActif.role_affiche || posteActif.role}</p>
             </div>
           )}
@@ -387,7 +397,7 @@ export default function EspaceEmploye() {
         <div className="flex-1 flex flex-col min-w-0">
           <header className="flex items-center justify-between px-6 py-4" style={{ borderBottom: `1px solid ${T.line}` }}>
             <div>
-              <h1 style={{ fontFamily: "Fraunces, serif", fontSize: 22, color: T.ivory }}>{NAV.find((n) => n.key === vue)?.label}</h1>
+              <h1 style={{ fontFamily: "Fraunces, serif", fontSize: 22, color: T.titre }}>{NAV.find((n) => n.key === vue)?.label}</h1>
               {posteActif && <p className="text-xs mt-0.5" style={{ color: "rgba(18,42,32,0.45)" }}>{posteActif.salon_nom}</p>}
             </div>
             <UserMenu />
@@ -397,7 +407,7 @@ export default function EspaceEmploye() {
               <p style={{ color: "rgba(18,42,32,0.5)" }}>Aucun poste actif trouvé. Contactez le gestionnaire de votre salon.</p>
             ) : (
               <>
-                {vue === "dashboard" && <VueDashboard posteActif={posteActif} />}
+                {vue === "dashboard" && <VueDashboard posteActif={posteActif} utilisateur={utilisateur} />}
                 {vue === "tickets" && <VueTickets posteActif={posteActif} />}
                 {vue === "avis" && <VueAvis posteActif={posteActif} />}
                 {vue === "abonnement" && <VueAbonnement posteActif={posteActif} />}

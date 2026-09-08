@@ -133,7 +133,7 @@ export default function Onboarding() {
           <div className="w-8 h-8 rounded-md flex items-center justify-center" style={{ background: T.gold }}>
             <Store size={16} style={{ color: T.inkDeep }} />
           </div>
-          <h1 style={{ fontFamily: "Fraunces, serif", fontSize: 20, color: T.ivory }}>Créer mon salon</h1>
+          <h1 style={{ fontFamily: "Fraunces, serif", fontSize: 20, color: T.titre }}>Créer mon salon</h1>
         </div>
 
         <div className="flex items-center gap-2 mb-6">
@@ -172,7 +172,7 @@ export default function Onboarding() {
                   {ROLES.map((r) => <option key={r} value={r} style={{ background: T.inkDeep, color: T.clair }}>{r}</option>)}
                 </select>
                 <button onClick={() => { if (nouvelEmploye.utilisateur) { setEmployes([...employes, nouvelEmploye]); setNouvelEmploye({ utilisateur: "", role: ROLES[0] }); } }}
-                  className="px-3 rounded-md" style={{ background: T.gold, color: T.inkDeep }}><Plus size={16} /></button>
+                  className="px-3 rounded-md" style={{ background: T.mint, color: T.boutonTexte }}><Plus size={16} /></button>
               </div>
               <p className="text-[11px]" style={{ color: "rgba(18,42,32,0.4)" }}>
                 L'employé doit d'abord posséder un compte utilisateur (inscription séparée) : renseignez son identifiant.
@@ -293,16 +293,16 @@ export default function Onboarding() {
             className="flex items-center gap-1.5 px-4 py-2.5 rounded-md text-sm" style={{ color: "rgba(18,42,32,0.6)", opacity: etape === 0 ? 0.3 : 1 }}>
             <ArrowLeft size={15} /> Précédent
           </button>
-          {etape === 0 && <button onClick={validerSalon} disabled={envoi} className="flex items-center gap-1.5 px-5 py-2.5 rounded-md text-sm font-semibold" style={{ background: T.gold, color: T.inkDeep, opacity: envoi ? 0.6 : 1 }}>Continuer <ArrowRight size={15} /></button>}
-          {etape === 1 && <button onClick={enregistrerEmployes} disabled={envoi} className="flex items-center gap-1.5 px-5 py-2.5 rounded-md text-sm font-semibold" style={{ background: T.gold, color: T.inkDeep, opacity: envoi ? 0.6 : 1 }}>Continuer <ArrowRight size={15} /></button>}
-          {etape === 2 && <button onClick={enregistrerSoins} disabled={envoi} className="flex items-center gap-1.5 px-5 py-2.5 rounded-md text-sm font-semibold" style={{ background: T.gold, color: T.inkDeep, opacity: envoi ? 0.6 : 1 }}>Continuer <ArrowRight size={15} /></button>}
+          {etape === 0 && <button onClick={validerSalon} disabled={envoi} className="flex items-center gap-1.5 px-5 py-2.5 rounded-md text-sm font-semibold" style={{ background: T.mint, color: T.boutonTexte, opacity: envoi ? 0.6 : 1 }}>Continuer <ArrowRight size={15} /></button>}
+          {etape === 1 && <button onClick={enregistrerEmployes} disabled={envoi} className="flex items-center gap-1.5 px-5 py-2.5 rounded-md text-sm font-semibold" style={{ background: T.mint, color: T.boutonTexte, opacity: envoi ? 0.6 : 1 }}>Continuer <ArrowRight size={15} /></button>}
+          {etape === 2 && <button onClick={enregistrerSoins} disabled={envoi} className="flex items-center gap-1.5 px-5 py-2.5 rounded-md text-sm font-semibold" style={{ background: T.mint, color: T.boutonTexte, opacity: envoi ? 0.6 : 1 }}>Continuer <ArrowRight size={15} /></button>}
           {etape === 3 && modeAbonnement === "essai" && (
-            <button onClick={demarrerEssai} disabled={envoi} className="flex items-center gap-1.5 px-5 py-2.5 rounded-md text-sm font-semibold" style={{ background: T.mint, color: T.inkDeep, opacity: envoi ? 0.6 : 1 }}>
+            <button onClick={demarrerEssai} disabled={envoi} className="flex items-center gap-1.5 px-5 py-2.5 rounded-md text-sm font-semibold" style={{ background: T.mint, color: T.boutonTexte, opacity: envoi ? 0.6 : 1 }}>
               <Sparkles size={15} /> Démarrer l'essai gratuit
             </button>
           )}
           {etape === 3 && modeAbonnement === "payant" && (
-            <button onClick={activerSalon} disabled={envoi || !modePaiement} className="flex items-center gap-1.5 px-5 py-2.5 rounded-md text-sm font-semibold" style={{ background: T.gold, color: T.inkDeep, opacity: (envoi || !modePaiement) ? 0.5 : 1 }}>
+            <button onClick={activerSalon} disabled={envoi || !modePaiement} className="flex items-center gap-1.5 px-5 py-2.5 rounded-md text-sm font-semibold" style={{ background: T.mint, color: T.boutonTexte, opacity: (envoi || !modePaiement) ? 0.5 : 1 }}>
               <Check size={15} /> Payer et activer
             </button>
           )}

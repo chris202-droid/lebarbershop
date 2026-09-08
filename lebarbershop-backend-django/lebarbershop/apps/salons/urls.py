@@ -5,7 +5,7 @@ from .views import (
     CodeSponsoringViewSet, AbonnementAnalyseSectorielleViewSet, ForfaitViewSet,
 )
 
-router = DefaultRouter()
+router = DefaultRouter(trailing_slash='/?')
 router.register("salons", SalonViewSet, basename="salon")
 router.register("abonnements", AbonnementViewSet, basename="abonnement")
 router.register("codes-reduction", CodeReductionViewSet, basename="code-reduction")

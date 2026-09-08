@@ -67,12 +67,12 @@ export default function Public() {
             <Search size={16} style={{ color: "rgba(18,42,32,0.4)" }} />
             <input value={recherche} onChange={(e) => setRecherche(e.target.value)} placeholder="Rechercher un salon par nom…" className="flex-1 bg-transparent outline-none text-sm" style={{ color: T.ivory }} />
           </div>
-          <h2 className="mb-3" style={{ fontFamily: "Fraunces, serif", fontSize: 20, color: T.ivory }}>Salons</h2>
+          <h2 className="mb-3" style={{ fontFamily: "Fraunces, serif", fontSize: 20, color: T.titre }}>Salons</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {filtres.map((s) => (
               <div key={s.id} className="rounded-lg p-4" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
                 <div className="flex items-start justify-between mb-1">
-                  <p style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.ivory }}>{s.nom}</p>
+                  <p style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.titre }}>{s.nom}</p>
                 </div>
                 <div className="flex items-center gap-1.5 text-xs" style={{ color: "rgba(18,42,32,0.5)" }}>
                   <MapPin size={11} style={{ color: T.mint }} /> {s.secteur_geographique}, {s.ville}
@@ -84,7 +84,7 @@ export default function Public() {
         </section>
 
         <section id="analyse" className="scroll-mt-20">
-          <div className="flex items-center gap-2 mb-1"><Sparkles size={17} style={{ color: T.gold }} /><h2 style={{ fontFamily: "Fraunces, serif", fontSize: 20, color: T.ivory }}>Analyse sectorielle</h2></div>
+          <div className="flex items-center gap-2 mb-1"><Sparkles size={17} style={{ color: T.gold }} /><h2 style={{ fontFamily: "Fraunces, serif", fontSize: 20, color: T.titre }}>Analyse sectorielle</h2></div>
           <p className="text-sm mb-5" style={{ color: "rgba(18,42,32,0.55)" }}>Identifiez où ouvrir votre prochain salon.</p>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
@@ -112,7 +112,7 @@ export default function Public() {
 
           {debloque && (
             <div className="mt-5 rounded-lg p-5" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
-              <div className="flex items-center gap-2 mb-4"><TrendingUp size={15} style={{ color: T.mint }} /><h3 style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.ivory }}>Nombre de salons par secteur</h3></div>
+              <div className="flex items-center gap-2 mb-4"><TrendingUp size={15} style={{ color: T.mint }} /><h3 style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.titre }}>Nombre de salons par secteur</h3></div>
               <ResponsiveContainer width="100%" height={200}>
                 <BarChart data={secteurs} layout="vertical" margin={{ left: 10 }}>
                   <CartesianGrid stroke={T.line} horizontal={false} />

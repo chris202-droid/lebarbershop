@@ -66,8 +66,8 @@ class Abonnement(models.Model):
     """
     PRIX_PREMIER_ABONNEMENT_MENSUEL = 1500
     PRIX_RENOUVELLEMENT_MENSUEL = 1800
-    DUREE_MINIMALE_MOIS = 3
-    DUREE_ESSAI_JOURS = 14
+    DUREE_MINIMALE_MOIS = 1
+    DUREE_ESSAI_JOURS = 30
 
     class Statut(models.TextChoices):
         ACTIF = "actif", "Actif"
@@ -82,8 +82,8 @@ class Abonnement(models.Model):
         help_text="Essai gratuit de 14 jours, sans paiement ni carte bancaire, limité à un par salon."
     )
     duree_mois = models.PositiveSmallIntegerField(null=True, blank=True)
-    prix_mensuel = models.IntegerField(default=0)
-    montant_total = models.IntegerField(default=0)
+    prix_mensuel = models.DecimalField(max_digits=10, decimal_places=2)
+    montant_total = models.DecimalField(max_digits=10, decimal_places=2)
 
     code_reduction = models.ForeignKey(
         "salons.CodeReduction", on_delete=models.SET_NULL, null=True, blank=True,
@@ -108,8 +108,8 @@ class CodeReduction(models.Model):
     """Codes de réduction créés par l'administrateur principal (ou secondaire habilité)."""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     code = models.CharField(max_length=30, unique=True)
-    montant_reduction = models.IntegerField(
-        default=0,
+    montant_reduction = models.DecimalField(
+        max_digits=10, decimal_places=2,
         help_text="Montant fixe (en FCFA) déduit du montant total, et non un pourcentage.",
     )
     # Propriétaire du code (point demandé explicitement) : la personne à qui
@@ -168,9 +168,9 @@ class CodeSponsoring(models.Model):
         related_name="codes_sponsoring_achetes",
         help_text="Renseigné uniquement pour les codes achetés via le programme partenaire employé.",
     )
-    commission_pourcentage = models.IntegerField(default=0)
-    montant_reduction_utilisateur = models.IntegerField(
-        default=0,
+    commission_pourcentage = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    montant_reduction_utilisateur = models.DecimalField(
+        max_digits=10, decimal_places=2, default=0,
         help_text="Montant fixe (en FCFA) déduit du montant total de l'abonnement pour la "
                    "personne qui utilise ce code à la souscription/au renouvellement — "
                    "distinct de la commission versée au propriétaire du code.",
@@ -223,7 +223,7 @@ class AbonnementAnalyseSectorielle(models.Model):
         Utilisateur, on_delete=models.CASCADE, related_name="abonnements_analyse"
     )
     type_abonnement = models.CharField(max_length=30, choices=Type.choices)
-    montant_paye = models.IntegerField(default=0)
+    montant_paye = models.DecimalField(max_digits=10, decimal_places=2)
     date_debut = models.DateTimeField()
     date_fin = models.DateTimeField()
     actif = models.BooleanField(default=True)
@@ -250,7 +250,7 @@ class Forfait(models.Model):
     nom = models.CharField(max_length=100)
     type_forfait = models.CharField(max_length=30, choices=Type.choices)
     description = models.CharField(max_length=255, blank=True, null=True)
-    prix = models.IntegerField(default=0)
+    prix = models.DecimalField(max_digits=10, decimal_places=2)
     duree_mois = models.PositiveSmallIntegerField(
         null=True, blank=True, help_text="Laisser vide si le forfait n'est pas périodique (ex. analyse sectorielle)."
     )

@@ -47,7 +47,7 @@ export default function ChangerMotDePasse() {
             <div className="w-12 h-12 rounded-lg flex items-center justify-center mb-3" style={{ background: T.gold }}>
               <KeyRound size={20} style={{ color: T.inkDeep }} />
             </div>
-            <h1 style={{ fontFamily: "Fraunces, serif", fontSize: 22, color: T.ivory, textAlign: "center" }}>
+            <h1 style={{ fontFamily: "Fraunces, serif", fontSize: 22, color: T.titre, textAlign: "center" }}>
               {premiereConnexion ? "Choisissez votre mot de passe" : "Changer mon mot de passe"}
             </h1>
             {premiereConnexion && (
@@ -73,7 +73,7 @@ export default function ChangerMotDePasse() {
               style={{ background: "rgba(18,42,32,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
             <button type="submit" disabled={envoi}
               className="w-full py-2.5 rounded-md text-sm font-semibold flex items-center justify-center gap-2"
-              style={{ background: T.gold, color: T.inkDeep, opacity: envoi ? 0.6 : 1 }}>
+              style={{ background: T.mint, color: T.boutonTexte, opacity: envoi ? 0.6 : 1 }}>
               {envoi ? "Enregistrement…" : "Valider"} <ArrowRight size={15} />
             </button>
           </form>

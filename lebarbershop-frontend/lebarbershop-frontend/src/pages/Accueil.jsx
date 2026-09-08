@@ -55,7 +55,7 @@ function Section({ id, eyebrow, titre, sous_titre, children, motif }) {
       {eyebrow && (
         <p className="text-xs uppercase tracking-widest mb-2" style={{ color: T.gold, fontFamily: "Manrope, sans-serif" }}>{eyebrow}</p>
       )}
-      {titre && <h2 style={{ fontFamily: "Fraunces, serif", fontSize: 32, color: T.ivory }}>{titre}</h2>}
+      {titre && <h2 style={{ fontFamily: "Fraunces, serif", fontSize: 32, color: T.titre }}>{titre}</h2>}
       {sous_titre && <p className="mt-2 max-w-xl text-sm" style={{ color: "rgba(18,42,32,0.6)" }}>{sous_titre}</p>}
       <div className="mt-10">{children}</div>
     </section>
@@ -139,8 +139,8 @@ export default function Accueil() {
 
       {/* Hero */}
       <section className="relative overflow-hidden px-6 pt-16 pb-20">
-        <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full" style={{ border: `1px solid ${T.line}` }} />
-        <div className="absolute -top-10 -right-10 w-72 h-72 rounded-full" style={{ border: `1px solid rgba(201,147,42,0.15)` }} />
+        <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full" style={{ border: `1.5px solid rgba(30,158,100,0.22)` }} />
+        <div className="absolute -top-10 -right-10 w-72 h-72 rounded-full" style={{ border: `1.5px solid rgba(201,147,42,0.28)` }} />
         <svg className="absolute -bottom-6 -left-6 w-64 h-64 opacity-[0.08] pointer-events-none" viewBox="0 0 200 200" fill="none" aria-hidden="true">
           {Array.from({ length: 36 }).map((_, i) => (
             <circle key={i} cx={10 + (i % 6) * 32} cy={10 + Math.floor(i / 6) * 32} r="3" fill={i % 3 === 0 ? T.gold : T.mint} />
@@ -156,7 +156,7 @@ export default function Accueil() {
             style={{ background: "rgba(201,147,42,0.12)", color: T.gold }}>
             <Sparkles size={12} /> Le SaaS des salons de coiffure & d'esthétique en Afrique
           </span>
-          <h1 style={{ fontFamily: "Fraunces, serif", fontSize: 44, lineHeight: 1.15, color: T.ivory }}>
+          <h1 style={{ fontFamily: "Fraunces, serif", fontSize: 44, lineHeight: 1.15, color: T.titre }}>
             Gérez votre salon, du ticket au bilan, en toute simplicité
           </h1>
           <p className="mt-5 text-base max-w-xl mx-auto" style={{ color: "rgba(18,42,32,0.6)" }}>
@@ -165,7 +165,7 @@ export default function Accueil() {
             avec paiement Orange Money, MTN Mobile Money et carte bancaire.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3 mt-8">
-            <Link to="/inscription" className="flex items-center gap-2 px-5 py-3 rounded-md text-sm font-semibold" style={{ background: T.gold, color: T.inkDeep }}>
+            <Link to="/inscription" className="flex items-center gap-2 px-5 py-3 rounded-md text-sm font-semibold" style={{ background: T.mint, color: T.boutonTexte }}>
               Créer mon salon <ArrowRight size={15} />
             </Link>
             <Link to="/salons" className="flex items-center gap-2 px-5 py-3 rounded-md text-sm font-semibold" style={{ background: "rgba(18,42,32,0.06)", color: T.ivory, border: `1px solid ${T.line}` }}>
@@ -186,7 +186,7 @@ export default function Accueil() {
           ].map((f) => (
             <div key={f.titre} className="rounded-lg p-5" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
               <f.icon size={20} style={{ color: T.mint }} className="mb-3" />
-              <p style={{ fontFamily: "Fraunces, serif", fontSize: 17, color: T.ivory }}>{f.titre}</p>
+              <p style={{ fontFamily: "Fraunces, serif", fontSize: 17, color: T.titre }}>{f.titre}</p>
               <p className="text-sm mt-2" style={{ color: "rgba(18,42,32,0.55)" }}>{f.texte}</p>
             </div>
           ))}
@@ -207,13 +207,13 @@ export default function Accueil() {
                 <div key={a} className="flex items-center gap-2 text-sm" style={{ color: "rgba(245,241,232,0.85)" }}><CheckCircle2 size={14} style={{ color: T.mint }} /> {a}</div>
               ))}
             </div>
-            <Link to="/inscription" className="mt-6 flex items-center justify-center gap-2 px-4 py-2.5 rounded-md text-sm font-semibold" style={{ background: T.gold, color: T.inkDeep }}>
+            <Link to="/inscription" className="mt-6 flex items-center justify-center gap-2 px-4 py-2.5 rounded-md text-sm font-semibold" style={{ background: T.mint, color: T.boutonTexte }}>
               Démarrer <ArrowRight size={14} />
             </Link>
           </div>
 
           <div className="rounded-lg p-6" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
-            <p style={{ fontFamily: "Fraunces, serif", fontSize: 20, color: T.ivory }}>Renouvellement</p>
+            <p style={{ fontFamily: "Fraunces, serif", fontSize: 20, color: T.titre }}>Renouvellement</p>
             <p className="mt-3"><span className="font-mono text-3xl" style={{ color: T.ivory }}>1 800</span> <span className="text-sm" style={{ color: "rgba(18,42,32,0.5)" }}>FCFA / mois</span></p>
             <p className="text-xs mt-1" style={{ color: "rgba(18,42,32,0.5)" }}>Renouvelable par période de 3 mois minimum</p>
             <div className="space-y-2 mt-5">
@@ -227,13 +227,13 @@ export default function Accueil() {
         <p className="text-xs uppercase tracking-widest mb-3" style={{ color: "rgba(18,42,32,0.4)" }}>Pour les porteurs de projet</p>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
           <div className="rounded-lg p-5" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
-            <p style={{ fontFamily: "Fraunces, serif", fontSize: 17, color: T.ivory }}>Secteurs rentables</p>
+            <p style={{ fontFamily: "Fraunces, serif", fontSize: 17, color: T.titre }}>Secteurs rentables</p>
             <p className="text-xs mt-1" style={{ color: "rgba(18,42,32,0.5)" }}>Où ouvrir votre prochain salon</p>
             <p className="mt-3 font-mono text-xl" style={{ color: T.mint }}>20 000 <span className="text-xs">FCFA</span></p>
             <Link to="/salons#analyse" className="mt-4 inline-flex items-center gap-1.5 text-xs" style={{ color: T.mint }}>Voir le détail <ArrowRight size={12} /></Link>
           </div>
           <div className="rounded-lg p-5" style={{ background: "rgba(18,42,32,0.04)", border: `1px solid ${T.line}` }}>
-            <p style={{ fontFamily: "Fraunces, serif", fontSize: 17, color: T.ivory }}>Analyse de gestion complète</p>
+            <p style={{ fontFamily: "Fraunces, serif", fontSize: 17, color: T.titre }}>Analyse de gestion complète</p>
             <p className="text-xs mt-1" style={{ color: "rgba(18,42,32,0.5)" }}>Standards, matériel, salaires, rendements</p>
             <p className="mt-3 font-mono text-xl" style={{ color: T.coral }}>25 000 <span className="text-xs">FCFA</span></p>
             <Link to="/salons#analyse" className="mt-4 inline-flex items-center gap-1.5 text-xs" style={{ color: T.coral }}>Voir le détail <ArrowRight size={12} /></Link>
@@ -282,7 +282,7 @@ export default function Accueil() {
                   placeholder="Salon ou structure (optionnel)" className="w-full px-3 py-2.5 rounded-md text-sm outline-none" style={{ background: "rgba(18,42,32,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
                 <input required value={formPartenaire.contact} onChange={(e) => setFormPartenaire({ ...formPartenaire, contact: e.target.value })}
                   placeholder="Email ou téléphone" className="w-full px-3 py-2.5 rounded-md text-sm outline-none" style={{ background: "rgba(18,42,32,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
-                <button type="submit" disabled={envoi.partenaire} className="w-full py-2.5 rounded-md text-sm font-semibold flex items-center justify-center gap-2" style={{ background: T.gold, color: T.inkDeep, opacity: envoi.partenaire ? 0.6 : 1 }}>
+                <button type="submit" disabled={envoi.partenaire} className="w-full py-2.5 rounded-md text-sm font-semibold flex items-center justify-center gap-2" style={{ background: T.mint, color: T.boutonTexte, opacity: envoi.partenaire ? 0.6 : 1 }}>
                   {envoi.partenaire ? "Envoi…" : "Devenir partenaire"} <ArrowRight size={14} />
                 </button>
               </>
@@ -361,7 +361,7 @@ export default function Accueil() {
                 </select>
                 <textarea required rows={4} value={formContact.message} onChange={(e) => setFormContact({ ...formContact, message: e.target.value })}
                   placeholder="Votre message" className="w-full px-3 py-2.5 rounded-md text-sm outline-none resize-none" style={{ background: "rgba(18,42,32,0.05)", color: T.ivory, border: `1px solid ${T.line}` }} />
-                <button type="submit" disabled={envoi.contact} className="px-5 py-2.5 rounded-md text-sm font-semibold flex items-center gap-2" style={{ background: T.gold, color: T.inkDeep, opacity: envoi.contact ? 0.6 : 1 }}>
+                <button type="submit" disabled={envoi.contact} className="px-5 py-2.5 rounded-md text-sm font-semibold flex items-center gap-2" style={{ background: T.mint, color: T.boutonTexte, opacity: envoi.contact ? 0.6 : 1 }}>
                   {envoi.contact ? "Envoi…" : "Envoyer"} <Send size={14} />
                 </button>
               </>

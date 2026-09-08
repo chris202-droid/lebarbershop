@@ -9,9 +9,11 @@ export const T = {
   ink: "#FFFFFF",        // fond principal (était le vert profond)
   inkDeep: "#0F3D2E",     // vert forêt profond — sidebars, modals, panneaux "inversés", tickets
   ivory: "#122A20",       // texte principal, sombre sur fond clair (était clair sur fond sombre)
-  gold: "#C9932A",        // accent doré/jaune — mis en avant, montants, éléments actifs
+  titre: "#155C3D",       // vert riche et affirmé, réservé aux titres (police Fraunces) pour que le vert se ressente clairement dans toute l'interface
+  gold: "#C9932A",        // accent doré/jaune — secondaire : montants, badges, logo
   coral: "#D9503C",       // erreurs, actions destructives
-  mint: "#1E9E64",        // vert accent vif — succès, validations, deuxième teinte de vert
+  mint: "#1E9E64",        // vert accent vif — boutons principaux, validations
+  boutonTexte: "#FCD34D", // doré/jaune vif — texte sur les boutons à fond vert (jamais de texte sombre sur vert)
   line: "rgba(18,42,32,0.12)",  // bordures subtiles, cohérentes avec `ivory`
 
   // Texte clair, réservé aux zones à fond volontairement sombre

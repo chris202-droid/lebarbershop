@@ -60,7 +60,7 @@ export default function Profil() {
               </div>
             )}
             <div>
-              <h1 style={{ fontFamily: "Fraunces, serif", fontSize: 22, color: T.ivory }}>
+              <h1 style={{ fontFamily: "Fraunces, serif", fontSize: 22, color: T.titre }}>
                 {utilisateur.first_name || utilisateur.username}
               </h1>
               {utilisateur.est_admin_principal && <p className="text-xs" style={{ color: T.gold }}>Administrateur principal</p>}
@@ -101,7 +101,7 @@ export default function Profil() {
 
             <button type="submit" disabled={envoi}
               className="w-full py-2.5 rounded-md text-sm font-semibold flex items-center justify-center gap-2"
-              style={{ background: T.gold, color: T.inkDeep, opacity: envoi ? 0.6 : 1 }}>
+              style={{ background: T.mint, color: T.boutonTexte, opacity: envoi ? 0.6 : 1 }}>
               <Save size={15} /> {envoi ? "Enregistrement…" : "Enregistrer"}
             </button>
           </form>

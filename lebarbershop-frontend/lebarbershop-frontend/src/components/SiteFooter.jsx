@@ -2,6 +2,7 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Scissors, Star } from "lucide-react";
 import { T } from "../lib/tokens";
+import { LogoTexte } from "./UI";
 
 const LIENS_RAPIDES = [
   { to: "/", label: "Accueil" },
@@ -36,7 +37,7 @@ export default function SiteFooter({ compact = false }) {
             <div className="w-7 h-7 rounded-md flex items-center justify-center" style={{ background: T.gold }}>
               <Scissors size={14} style={{ color: T.inkDeep }} />
             </div>
-            <span style={{ fontFamily: "Fraunces, serif", fontSize: 15, color: T.ivory }}>LeBarberShop</span>
+            <LogoTexte fontSize={15} />
           </Link>
 
           <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5">
