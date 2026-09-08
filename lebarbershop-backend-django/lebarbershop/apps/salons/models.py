@@ -79,7 +79,7 @@ class Abonnement(models.Model):
     est_premier_abonnement = models.BooleanField(default=False)
     est_essai = models.BooleanField(
         default=False,
-        help_text="Essai gratuit de 14 jours, sans paiement ni carte bancaire, limité à un par salon."
+        help_text="Essai gratuit de 15 jours, sans paiement ni carte bancaire, limité à un par salon."
     )
     duree_mois = models.PositiveSmallIntegerField(null=True, blank=True)
     prix_mensuel = models.DecimalField(max_digits=10, decimal_places=2)
@@ -147,8 +147,8 @@ class CodeSponsoring(models.Model):
     .confirmer_paiement.
     """
     PRIX_ACHAT_PARTENAIRE = 500
-    COMMISSION_PAR_UTILISATION = 200
-    REDUCTION_UTILISATEUR_PAR_DEFAUT = 300  # FCFA accordés à qui utilise le code, distinct de la commission
+    COMMISSION_PAR_UTILISATION = 250
+    REDUCTION_UTILISATEUR_PAR_DEFAUT = 250  # FCFA accordés à qui utilise le code, distinct de la commission
 
     class Statut(models.TextChoices):
         ACTIF = "actif", "Actif"

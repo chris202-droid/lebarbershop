@@ -43,7 +43,7 @@ export default function Connexion() {
       const destination = calculerRouteParDefaut(profil, postes.results || postes);
       navigate(destination);
     } catch (err) {
-      setErreur(err.body?.detail || "Identifiants incorrects.");
+      setErreur(err.body?.detail || "Identifiants incorrects, veuillez vérifier vos Identifiants");
     } finally {
       setEnvoi(false);
     }
@@ -83,7 +83,7 @@ export default function Connexion() {
               {envoi ? "Connexion…" : "Se connecter"} <ArrowRight size={15} />
             </button>
             <p className="text-center text-xs" style={{ color: "rgba(18,42,32,0.45)" }}>
-              Pas encore de compte ? <Link to="/inscription" className="underline" style={{ color: T.mint }}>Créer un compte</Link>
+              Pas encore de compte ? <Link to="/inscription" className="underline" style={{ color: T.mint }}> Créer un compte</Link>
             </p>
           </form>
         </div>
