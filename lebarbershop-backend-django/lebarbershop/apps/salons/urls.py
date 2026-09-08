@@ -15,5 +15,5 @@ router.register("forfaits", ForfaitViewSet, basename="forfait")
 
 urlpatterns = [
     # Déclarée avant le routeur pour ne pas être interceptée par abonnements/{pk}/
-    path("abonnements/essai/", AbonnementEssaiView.as_view(), name="abonnement-essai"),
+    path("abonnements/essai", AbonnementEssaiView.as_view(), name="abonnement-essai"),
 ] + router.urls
