@@ -43,7 +43,13 @@ export function RoleProvider({ children }) {
     try {
       const p = await mesPostes(); // GET /api/v1/employes/?moi=true
       setPostes(p.results || p);
-    } catch {
+    } catch (err) {
+      // Avaler cette erreur silencieusement rendrait invisible un vrai
+      // problème backend (ex. migrations non appliquées en production) :
+      // l'utilisateur atterrirait sur /onboarding sans aucune explication.
+      // On logge donc explicitement pour que l'erreur soit visible dans la
+      // console du navigateur (F12) en cas de souci de redirection.
+      console.error("Impossible de récupérer les postes de l'utilisateur (GET /employes/?moi=true) :", err);
       setPostes([]);
     } finally {
       setChargement(false);

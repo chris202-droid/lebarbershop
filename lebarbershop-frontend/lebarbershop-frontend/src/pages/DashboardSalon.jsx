@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState, useCallback } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   Scissors, LayoutGrid, Users, Receipt, Package, Star, CreditCard,
   Wallet, Clock, AlertTriangle, CheckCircle2, Plus, ChevronDown,
@@ -43,6 +43,8 @@ const CATEGORIES_PRODUIT = [
 
 export default function DashboardSalon() {
   const { utilisateur } = useAuth();
+  const location = useLocation();
+  const messageArrivee = location.state; // { bienvenue, avertissement } transmis depuis l'onboarding
   const [vue, setVue] = useState("dashboard");
 
   const [salons, setSalons] = useState([]);
@@ -473,8 +475,13 @@ export default function DashboardSalon() {
                   Bienvenue, {utilisateur?.first_name || utilisateur?.username} 👋
                 </p>
                 <p className="text-sm mt-1" style={{ color: "rgba(18,42,32,0.65)" }}>
-                  Voici un aperçu de <strong>{salon.nom}</strong> aujourd'hui.
+                  {messageArrivee?.bienvenue || <>Voici un aperçu de <strong>{salon.nom}</strong> aujourd'hui.</>}
                 </p>
+                {messageArrivee?.avertissement && (
+                  <p className="text-xs mt-2 flex items-center gap-1.5" style={{ color: T.coral }}>
+                    <AlertTriangle size={13} /> {messageArrivee.avertissement}
+                  </p>
+                )}
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

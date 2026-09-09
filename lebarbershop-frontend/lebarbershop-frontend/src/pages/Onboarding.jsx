@@ -52,13 +52,23 @@ export default function Onboarding() {
   }, [duree, codePromo, modeAbonnement, salonId]);
 
   // Essai gratuit : POST /api/v1/abonnements/essai/ — 14 jours, sans paiement ni carte.
+  // Le salon existe déjà en base depuis l'étape 1 (avec son gestionnaire) :
+  // même si cette dernière étape échoue techniquement, on ne bloque JAMAIS
+  // l'utilisateur dans l'onboarding — il doit toujours pouvoir atteindre
+  // son tableau de bord, quitte à activer/réessayer l'abonnement depuis là.
   const demarrerEssai = async () => {
     setErreur(""); setEnvoi(true);
     try {
       await demarrerEssaiGratuit(salonId);
-      navigate("/tableau-de-bord");
+      navigate("/tableau-de-bord", { state: { bienvenue: "Votre salon a été créé avec succès ! Votre essai gratuit de 14 jours est actif." } });
     } catch (err) {
-      setErreur("Erreur lors du démarrage de l'essai gratuit : " + (err.body?.detail || ""));
+      console.error("Échec de l'activation de l'essai gratuit :", err);
+      navigate("/tableau-de-bord", {
+        state: {
+          bienvenue: "Votre salon a été créé avec succès.",
+          avertissement: "L'activation automatique de l'essai gratuit a échoué — vous pouvez la relancer depuis l'onglet Abonnement.",
+        },
+      });
     } finally { setEnvoi(false); }
   };
 
@@ -108,16 +118,37 @@ export default function Onboarding() {
       const abonnement = await creerAbonnement({ // point 1 : code de réduction OU de sponsoring, appliqué au montant final
         salon: salonId, duree_mois: duree, ...(codePromo ? { code_promo: codePromo } : {}),
       });
-      await initierPaiement({
-        abonnement: abonnement.id,
-        mode_paiement: modePaiement,
-        montant: abonnement.montant_total,
-        reference_transaction: `LBS-${Date.now()}`,
-      });
-      // La confirmation réelle arrive via webhook -> PaiementAbonnementViewSet.confirmer()
-      navigate("/tableau-de-bord");
+      try {
+        await initierPaiement({
+          abonnement: abonnement.id,
+          mode_paiement: modePaiement,
+          montant: abonnement.montant_total,
+          reference_transaction: `LBS-${Date.now()}`,
+        });
+        // La confirmation réelle arrive via webhook -> PaiementAbonnementViewSet.confirmer()
+        navigate("/tableau-de-bord", { state: { bienvenue: "Votre salon a été créé avec succès ! Votre abonnement est en cours d'activation." } });
+      } catch (erreurPaiement) {
+        // Le salon et l'abonnement existent déjà en base : on ne bloque pas
+        // l'utilisateur si seule l'initiation du paiement échoue.
+        console.error("Échec de l'initiation du paiement :", erreurPaiement);
+        navigate("/tableau-de-bord", {
+          state: {
+            bienvenue: "Votre salon a été créé avec succès.",
+            avertissement: "L'initiation du paiement a échoué — retentez-la depuis l'onglet Abonnement.",
+          },
+        });
+      }
     } catch (err) {
-      setErreur("Erreur lors de l'abonnement : " + (err.body?.detail || ""));
+      // Ici, la création du salon (étape 1) a déjà réussi ; seule la
+      // création de l'abonnement échoue — on informe sans bloquer l'accès
+      // au tableau de bord, l'abonnement pouvant être finalisé plus tard.
+      console.error("Échec de la création de l'abonnement :", err);
+      navigate("/tableau-de-bord", {
+        state: {
+          bienvenue: "Votre salon a été créé avec succès.",
+          avertissement: "L'activation de l'abonnement a échoué — retentez-la depuis l'onglet Abonnement.",
+        },
+      });
     } finally { setEnvoi(false); }
   };
 
