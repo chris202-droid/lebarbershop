@@ -154,13 +154,13 @@ export default function Accueil() {
           }}>
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs mb-5"
             style={{ background: "rgba(201,147,42,0.12)", color: T.gold }}>
-            <Sparkles size={12} /> Le SaaS des salons de coiffure & d'esthétique en Afrique
+             Le SaaS des salons de coiffure & d'esthétique en Afrique
           </span>
           <h1 style={{ fontFamily: "Fraunces, serif", fontSize: 44, lineHeight: 1.15, color: T.titre }}>
             Gérez votre salon, du ticket au bilan, en toute simplicité
           </h1>
           <p className="mt-5 text-base max-w-xl mx-auto" style={{ color: "rgba(18,42,32,0.6)" }}>
-            Tickets, employés, stocks, abonnements et statistiques — LeBarberShop
+            Tickets, employés, stocks, abonnements et statistiques. LeBarberShop
             centralise la gestion de votre salon de coiffure ou d'esthétique,
             avec paiement Orange Money, MTN Mobile Money et carte bancaire.
           </p>
@@ -332,7 +332,7 @@ export default function Accueil() {
           <div className="lg:col-span-2 space-y-4">
             {[
               { icon: Mail, label: "contact@lebarbershop.org" },
-              { icon: Phone, label: "+237 6XX XXX XXX" },
+              { icon: Phone, label: "+237 671 729 822" },
               { icon: MapPin, label: "Yaoundé & Douala, Cameroun" },
             ].map((c) => (
               <div key={c.label} className="flex items-center gap-3 text-sm" style={{ color: "rgba(18,42,32,0.7)" }}>
