@@ -84,7 +84,7 @@ export default function Public() {
         </section>
 
         <section id="analyse" className="scroll-mt-20">
-          <div className="flex items-center gap-2 mb-1"><Sparkles size={17} style={{ color: T.gold }} /><h2 style={{ fontFamily: "Fraunces, serif", fontSize: 20, color: T.titre }}>Analyse sectorielle</h2></div>
+          <div className="flex items-center gap-2 mb-1"><h2 style={{ fontFamily: "Fraunces, serif", fontSize: 20, color: T.titre }}>Analyse sectorielle</h2></div>
           <p className="text-sm mb-5" style={{ color: "rgba(18,42,32,0.55)" }}>Identifiez où ouvrir votre prochain salon.</p>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
