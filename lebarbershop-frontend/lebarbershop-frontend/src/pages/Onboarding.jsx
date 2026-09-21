@@ -8,6 +8,7 @@ import { creerSoin } from "../api/services";
 import { creerAbonnement } from "../api/salons";
 import { initierPaiement } from "../api/paiements";
 import { Erreur } from "../components/UI";
+import { useRole } from "../context/RoleContext";
 import SiteFooter from "../components/SiteFooter";
 import BoutonWhatsAppFlottant from "../components/BoutonWhatsAppFlottant";
 
@@ -17,6 +18,7 @@ const CATEGORIES = ["coiffure_homme", "coiffure_femme", "esthetique", "pedicure"
 
 export default function Onboarding() {
   const navigate = useNavigate();
+  const { rafraichirPostes } = useRole();
   const [etape, setEtape] = useState(0);
   const [erreur, setErreur] = useState("");
   const [envoi, setEnvoi] = useState(false);
@@ -60,9 +62,11 @@ export default function Onboarding() {
     setErreur(""); setEnvoi(true);
     try {
       await demarrerEssaiGratuit(salonId);
+      await rafraichirPostes(); // le contexte de rôle doit connaître le nouveau salon AVANT la redirection
       navigate("/tableau-de-bord", { state: { bienvenue: "Votre salon a été créé avec succès ! Votre essai gratuit de 14 jours est actif." } });
     } catch (err) {
       console.error("Échec de l'activation de l'essai gratuit :", err);
+      await rafraichirPostes();
       navigate("/tableau-de-bord", {
         state: {
           bienvenue: "Votre salon a été créé avec succès.",
@@ -126,11 +130,13 @@ export default function Onboarding() {
           reference_transaction: `LBS-${Date.now()}`,
         });
         // La confirmation réelle arrive via webhook -> PaiementAbonnementViewSet.confirmer()
+        await rafraichirPostes(); // le contexte de rôle doit connaître le nouveau salon AVANT la redirection
         navigate("/tableau-de-bord", { state: { bienvenue: "Votre salon a été créé avec succès ! Votre abonnement est en cours d'activation." } });
       } catch (erreurPaiement) {
         // Le salon et l'abonnement existent déjà en base : on ne bloque pas
         // l'utilisateur si seule l'initiation du paiement échoue.
         console.error("Échec de l'initiation du paiement :", erreurPaiement);
+        await rafraichirPostes();
         navigate("/tableau-de-bord", {
           state: {
             bienvenue: "Votre salon a été créé avec succès.",
@@ -143,6 +149,7 @@ export default function Onboarding() {
       // création de l'abonnement échoue — on informe sans bloquer l'accès
       // au tableau de bord, l'abonnement pouvant être finalisé plus tard.
       console.error("Échec de la création de l'abonnement :", err);
+      await rafraichirPostes();
       navigate("/tableau-de-bord", {
         state: {
           bienvenue: "Votre salon a été créé avec succès.",

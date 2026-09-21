@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import {
   Shield, Store, Inbox, Tag, Gift, Package, TrendingUp, ShieldCheck,
   Plus, MapPin, CheckCircle2, XCircle, Clock, X, Pencil, KeyRound,
-  MessageSquare, Users2, CreditCard,
+  MessageSquare, Users2, CreditCard, Menu,
 } from "lucide-react";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Legend } from "recharts";
 import { T } from "../lib/tokens";
@@ -879,29 +879,44 @@ function VueAdministrateurs() {
 
 export default function Admin() {
   const [vue, setVue] = useState("salons");
+  const [sidebarOuvert, setSidebarOuvert] = useState(false);
 
   return (
     <div className="w-full min-h-screen flex flex-col" style={{ background: T.ink, fontFamily: "Manrope, sans-serif" }}>
       <BoutonWhatsAppFlottant />
-      <div className="flex flex-1 min-h-0">
-        <aside className="w-[260px] shrink-0 p-4 flex flex-col" style={{ borderRight: `1px solid ${T.line}`, background: "rgba(0,0,0,0.12)" }}>
-          <Link to="/" className="flex items-center gap-2 px-2 mb-2 mt-1">
-            <div className="w-8 h-8 rounded-md flex items-center justify-center" style={{ background: T.gold }}><Shield size={16} style={{ color: T.inkDeep }} /></div>
-            <div>
-              <p><LogoTexte fontSize={15} /></p>
-              <p className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: T.gold }}>Super administrateur</p>
-            </div>
-          </Link>
+      <div className="flex flex-1 min-h-0 relative">
+        {sidebarOuvert && (
+          <div className="fixed inset-0 z-40 lg:hidden" style={{ background: "rgba(15,61,46,0.5)" }} onClick={() => setSidebarOuvert(false)} />
+        )}
+        <aside className={`${sidebarOuvert ? "flex" : "hidden"} lg:flex fixed lg:relative inset-y-0 left-0 z-50 lg:z-auto w-[260px] shrink-0 p-4 flex-col overflow-y-auto`}
+          style={{ borderRight: `1px solid ${T.line}`, background: T.ink }}>
+          <div className="flex items-center justify-between mb-2 mt-1">
+            <Link to="/" className="flex items-center gap-2 px-2">
+              <div className="w-8 h-8 rounded-md flex items-center justify-center" style={{ background: T.gold }}><Shield size={16} style={{ color: T.inkDeep }} /></div>
+              <div>
+                <p><LogoTexte fontSize={15} /></p>
+                <p className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: T.gold }}>Super administrateur</p>
+              </div>
+            </Link>
+            <button className="lg:hidden p-1" onClick={() => setSidebarOuvert(false)} aria-label="Fermer le menu">
+              <X size={20} style={{ color: T.titre }} />
+            </button>
+          </div>
           <p className="text-[11px] px-2 mb-6" style={{ color: "rgba(18,42,32,0.35)" }}>Gestion globale de la plateforme</p>
-          <nav className="space-y-1">{NAV.map((n) => <NavItem key={n.key} {...n} active={vue === n.key} onClick={() => setVue(n.key)} />)}</nav>
+          <nav className="space-y-1">{NAV.map((n) => <NavItem key={n.key} {...n} active={vue === n.key} onClick={() => { setVue(n.key); setSidebarOuvert(false); }} />)}</nav>
         </aside>
 
         <div className="flex-1 flex flex-col min-w-0">
-          <header className="flex items-center justify-between px-6 py-4" style={{ borderBottom: `1px solid ${T.line}` }}>
-            <h1 style={{ fontFamily: "Fraunces, serif", fontSize: 22, color: T.titre }}>{NAV.find((n) => n.key === vue)?.label}</h1>
+          <header className="flex items-center justify-between gap-3 px-4 sm:px-6 py-4" style={{ borderBottom: `1px solid ${T.line}` }}>
+            <div className="flex items-center gap-2 min-w-0">
+              <button className="lg:hidden p-1 shrink-0" onClick={() => setSidebarOuvert(true)} aria-label="Ouvrir le menu">
+                <Menu size={22} style={{ color: T.titre }} />
+              </button>
+              <h1 className="truncate" style={{ fontFamily: "Fraunces, serif", fontSize: 22, color: T.titre }}>{NAV.find((n) => n.key === vue)?.label}</h1>
+            </div>
             <UserMenu />
           </header>
-          <main className="flex-1 overflow-auto p-6">
+          <main className="flex-1 overflow-auto p-4 sm:p-6">
             {vue === "salons" && <VueSalons />}
             {vue === "abonnements" && <VueAbonnements />}
             {vue === "demandes" && <VueDemandes />}

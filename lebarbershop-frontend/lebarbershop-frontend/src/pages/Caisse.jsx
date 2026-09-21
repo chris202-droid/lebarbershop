@@ -70,8 +70,8 @@ function VueEncaissement({ salon }) {
   const total = (t) => Number(t.montant_net || 0);
 
   return (
-    <div className="flex flex-1 min-h-0">
-      <aside className="w-[300px] shrink-0 p-4 flex flex-col" style={{ borderRight: `1px solid ${T.line}` }}>
+    <div className="flex flex-col lg:flex-row flex-1 min-h-0">
+      <aside className="w-full lg:w-[300px] lg:shrink-0 p-4 flex flex-col max-h-[45vh] lg:max-h-none" style={{ borderRight: `1px solid ${T.line}` }}>
         <div className="flex items-center gap-2 mb-5 px-1">
           <Wallet size={18} style={{ color: T.gold }} />
           <div>
@@ -94,9 +94,9 @@ function VueEncaissement({ salon }) {
         </div>
       </aside>
 
-      <main className="flex-1 flex items-center justify-center p-8">
+      <main className="flex-1 flex items-center justify-center p-4 sm:p-8">
         {!ticket ? (
-          <div className="text-center">
+          <div className="text-center py-10">
             <Receipt size={40} className="mx-auto mb-3" style={{ color: "rgba(18,42,32,0.2)" }} />
             <p style={{ color: "rgba(18,42,32,0.4)" }}>Sélectionnez un ticket pour l'encaisser</p>
           </div>
@@ -164,7 +164,7 @@ function VueBilan({ salon }) {
   return (
     <div className="flex-1 overflow-auto p-6 space-y-5">
       <Erreur message={erreur} />
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         {[["semaine", "Semaine"], ["mois", "Mois"], ["trimestre", "Trimestre"], ["semestre", "Semestre"], ["annee", "Année"]].map(([k, l]) => (
           <button key={k} onClick={() => setPeriode(k)}
             className="px-3 py-1.5 rounded-full text-xs font-medium"

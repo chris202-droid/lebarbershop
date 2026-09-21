@@ -4,7 +4,7 @@ import {
   Scissors, LayoutGrid, Users, Receipt, Package, Star, CreditCard,
   Wallet, Clock, AlertTriangle, CheckCircle2, Plus, ChevronDown,
   Camera, Lock, TrendingUp, Sparkles, Smartphone, CreditCard as CardIcon,
-  Upload, ShieldCheck, PackagePlus, XCircle, X,
+  Upload, ShieldCheck, PackagePlus, XCircle, X, Menu,
 } from "lucide-react";
 import { ResponsiveContainer, AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 import { T } from "../lib/tokens";
@@ -46,6 +46,7 @@ export default function DashboardSalon() {
   const location = useLocation();
   const messageArrivee = location.state; // { bienvenue, avertissement } transmis depuis l'onboarding
   const [vue, setVue] = useState("dashboard");
+  const [sidebarOuvert, setSidebarOuvert] = useState(false);
 
   const [salons, setSalons] = useState([]);
   const [salonActifId, setSalonActifId] = useState(null);
@@ -407,14 +408,23 @@ export default function DashboardSalon() {
   return (
     <div className="w-full min-h-screen flex flex-col" style={{ background: T.ink, fontFamily: "Manrope, sans-serif" }}>
       <BoutonWhatsAppFlottant />
-      <div className="flex flex-1 min-h-0">
-      <aside className="w-[240px] shrink-0 flex flex-col p-4" style={{ borderRight: `1px solid ${T.line}` }}>
-        <Link to="/" className="flex items-center gap-2 px-2 mb-6 mt-1">
-          <div className="w-8 h-8 rounded-md flex items-center justify-center" style={{ background: T.gold }}>
-            <Scissors size={16} style={{ color: T.inkDeep }} />
-          </div>
-          <LogoTexte fontSize={17} />
-        </Link>
+      <div className="flex flex-1 min-h-0 relative">
+      {sidebarOuvert && (
+        <div className="fixed inset-0 z-40 lg:hidden" style={{ background: "rgba(15,61,46,0.5)" }} onClick={() => setSidebarOuvert(false)} />
+      )}
+      <aside className={`${sidebarOuvert ? "flex" : "hidden"} lg:flex fixed lg:relative inset-y-0 left-0 z-50 lg:z-auto w-[260px] shrink-0 flex-col p-4 overflow-y-auto`}
+        style={{ background: T.ink, borderRight: `1px solid ${T.line}` }}>
+        <div className="flex items-center justify-between mb-6 mt-1">
+          <Link to="/" className="flex items-center gap-2 px-2">
+            <div className="w-8 h-8 rounded-md flex items-center justify-center" style={{ background: T.gold }}>
+              <Scissors size={16} style={{ color: T.inkDeep }} />
+            </div>
+            <LogoTexte fontSize={17} />
+          </Link>
+          <button className="lg:hidden p-1" onClick={() => setSidebarOuvert(false)}>
+            <X size={20} style={{ color: T.titre }} />
+          </button>
+        </div>
 
         {/* Sélecteur de salon — un gestionnaire peut en posséder plusieurs */}
         {salons.length > 0 && (
@@ -447,17 +457,22 @@ export default function DashboardSalon() {
         )}
 
         <nav className="space-y-1 flex-1">
-          {NAV.map((n) => <NavItem key={n.key} {...n} badge={n.key === "tickets" ? enAttente.length || undefined : undefined} active={vue === n.key} onClick={() => setVue(n.key)} />)}
+          {NAV.map((n) => <NavItem key={n.key} {...n} badge={n.key === "tickets" ? enAttente.length || undefined : undefined} active={vue === n.key} onClick={() => { setVue(n.key); setSidebarOuvert(false); }} />)}
         </nav>
       </aside>
 
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="flex items-center justify-between px-6 py-4" style={{ borderBottom: `1px solid ${T.line}` }}>
-          <h1 style={{ fontFamily: "Fraunces, serif", fontSize: 22, color: T.titre }}>{titre}</h1>
+        <header className="flex items-center justify-between gap-3 px-4 sm:px-6 py-4" style={{ borderBottom: `1px solid ${T.line}` }}>
+          <div className="flex items-center gap-3 min-w-0">
+            <button className="lg:hidden p-1 shrink-0" onClick={() => setSidebarOuvert(true)}>
+              <Menu size={22} style={{ color: T.titre }} />
+            </button>
+            <h1 className="truncate" style={{ fontFamily: "Fraunces, serif", fontSize: 22, color: T.titre }}>{titre}</h1>
+          </div>
           <UserMenu />
         </header>
 
-        <main className="flex-1 overflow-auto p-6 space-y-5">
+        <main className="flex-1 overflow-auto p-4 sm:p-6 space-y-5">
           <Erreur message={erreur} />
           {!salon && (
             <div>
@@ -626,11 +641,11 @@ export default function DashboardSalon() {
                       <div className="space-y-2 pt-2" style={{ borderTop: `1px dashed ${T.line}` }}>
                         {panierTicket.map((p) => (
                           <div key={p.uid} className="flex items-center justify-between gap-2 text-xs">
-                            <span style={{ color: "rgba(18,42,32,0.8)" }}>{p.nom}</span>
+                            <span className="truncate min-w-0" style={{ color: "rgba(18,42,32,0.8)" }}>{p.nom}</span>
                             <div className="flex items-center gap-2 shrink-0">
                               {/* Prix modifiable à la main lors de l'enregistrement (point 3) */}
                               <input type="number" min="0" value={p.prixModifie} onChange={(e) => modifierPrixPanier(p.uid, e.target.value)}
-                                className="w-24 px-2 py-1 rounded-md text-xs outline-none text-right" style={{ background: "rgba(18,42,32,0.05)", color: T.gold, border: `1px solid ${T.line}` }} />
+                                className="w-20 sm:w-24 px-2 py-1 rounded-md text-xs outline-none text-right" style={{ background: "rgba(18,42,32,0.05)", color: T.gold, border: `1px solid ${T.line}` }} />
                               <button type="button" onClick={() => retirerSoinPanier(p.uid)}><X size={12} style={{ color: T.coral }} /></button>
                             </div>
                           </div>

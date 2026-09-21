@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Scissors, LayoutGrid, Receipt, Star, CreditCard, Handshake,
-  Plus, X, CheckCircle2, XCircle, Clock, TrendingUp, Gift,
+  Plus, X, CheckCircle2, XCircle, Clock, TrendingUp, Gift, Menu,
 } from "lucide-react";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 import { T } from "../lib/tokens";
@@ -203,9 +203,9 @@ function VueTickets({ posteActif }) {
 
       {/* Mes tickets ouverts, en attente de passage en caisse */}
       <div>
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center justify-between mb-3 gap-2 flex-wrap">
           <h3 style={{ fontFamily: "Fraunces, serif", fontSize: 16, color: T.titre }}>Mes tickets en attente de caisse</h3>
-          <button onClick={() => setFormOuvert(!formOuvert)} className="flex items-center gap-1.5 px-3 py-2 rounded-md text-xs font-semibold" style={{ background: T.mint, color: T.boutonTexte }}>
+          <button onClick={() => setFormOuvert(!formOuvert)} className="flex items-center gap-1.5 px-3 py-2 rounded-md text-xs font-semibold shrink-0" style={{ background: T.mint, color: T.boutonTexte }}>
             <Plus size={13} /> Nouveau ticket
           </button>
         </div>
@@ -228,10 +228,10 @@ function VueTickets({ posteActif }) {
               <div className="space-y-1.5 pt-2" style={{ borderTop: `1px dashed ${T.line}` }}>
                 {panier.map((p) => (
                   <div key={p.uid} className="flex items-center justify-between gap-2 text-xs">
-                    <span style={{ color: "rgba(18,42,32,0.8)" }}>{p.nom}</span>
+                    <span className="truncate min-w-0" style={{ color: "rgba(18,42,32,0.8)" }}>{p.nom}</span>
                     <div className="flex items-center gap-2 shrink-0">
                       <input type="number" min="0" value={p.prixModifie} onChange={(e) => modifierPrix(p.uid, e.target.value)}
-                        className="w-24 px-2 py-1 rounded-md text-xs outline-none text-right" style={{ background: "rgba(18,42,32,0.05)", color: T.gold, border: `1px solid ${T.line}` }} />
+                        className="w-20 sm:w-24 px-2 py-1 rounded-md text-xs outline-none text-right" style={{ background: "rgba(18,42,32,0.05)", color: T.gold, border: `1px solid ${T.line}` }} />
                       <button type="button" onClick={() => retirerSoin(p.uid)}><X size={12} style={{ color: T.coral }} /></button>
                     </div>
                   </div>
@@ -354,6 +354,7 @@ export default function EspaceEmploye() {
   const { postes } = useRole();
   const [vue, setVue] = useState("dashboard");
   const [partenaireOuvert, setPartenaireOuvert] = useState(false);
+  const [sidebarOuvert, setSidebarOuvert] = useState(false); // tiroir de menu sur mobile
 
   // Poste "praticien" actif (coiffeur/coiffeuse/maquilleuse/esthéticienne) —
   // détermine le salon d'appartenance affiché dans l'en-tête (point 2).
@@ -365,14 +366,23 @@ export default function EspaceEmploye() {
       <BoutonWhatsAppFlottant />
       <PanneauPartenaire ouvert={partenaireOuvert} onFermer={() => setPartenaireOuvert(false)} />
 
-      <div className="flex flex-1 min-h-0">
-        <aside className="w-[240px] shrink-0 flex flex-col p-4" style={{ borderRight: `1px solid ${T.line}` }}>
-          <Link to="/" className="flex items-center gap-2 px-2 mb-2 mt-1">
-            <div className="w-8 h-8 rounded-md flex items-center justify-center" style={{ background: T.gold }}>
-              <Scissors size={16} style={{ color: T.inkDeep }} />
-            </div>
-            <LogoTexte fontSize={17} />
-          </Link>
+      <div className="flex flex-1 min-h-0 relative">
+        {sidebarOuvert && (
+          <div className="fixed inset-0 z-40 lg:hidden" style={{ background: "rgba(15,61,46,0.5)" }} onClick={() => setSidebarOuvert(false)} />
+        )}
+        <aside className={`${sidebarOuvert ? "flex" : "hidden"} lg:flex fixed lg:relative inset-y-0 left-0 z-50 lg:z-auto w-[260px] shrink-0 flex-col p-4 overflow-y-auto`}
+          style={{ background: T.ink, borderRight: `1px solid ${T.line}` }}>
+          <div className="flex items-center justify-between mb-2 mt-1">
+            <Link to="/" className="flex items-center gap-2 px-2">
+              <div className="w-8 h-8 rounded-md flex items-center justify-center" style={{ background: T.gold }}>
+                <Scissors size={16} style={{ color: T.inkDeep }} />
+              </div>
+              <LogoTexte fontSize={17} />
+            </Link>
+            <button className="lg:hidden p-1" onClick={() => setSidebarOuvert(false)} aria-label="Fermer le menu">
+              <X size={20} style={{ color: T.titre }} />
+            </button>
+          </div>
 
           {/* Nom du salon auquel l'employé appartient (point 2) */}
           {posteActif && (
@@ -384,10 +394,10 @@ export default function EspaceEmploye() {
           )}
 
           <nav className="space-y-1 flex-1">
-            {NAV.map((n) => <NavItem key={n.key} {...n} active={vue === n.key} onClick={() => setVue(n.key)} />)}
+            {NAV.map((n) => <NavItem key={n.key} {...n} active={vue === n.key} onClick={() => { setVue(n.key); setSidebarOuvert(false); }} />)}
           </nav>
 
-          <button onClick={() => setPartenaireOuvert(true)}
+          <button onClick={() => { setPartenaireOuvert(true); setSidebarOuvert(false); }}
             className="flex items-center gap-2 px-3.5 py-2.5 rounded-md text-sm font-semibold mt-2"
             style={{ background: "rgba(201,147,42,0.12)", color: T.gold, border: `1px solid rgba(201,147,42,0.3)` }}>
             <Handshake size={16} /> Devenir partenaire
@@ -395,14 +405,19 @@ export default function EspaceEmploye() {
         </aside>
 
         <div className="flex-1 flex flex-col min-w-0">
-          <header className="flex items-center justify-between px-6 py-4" style={{ borderBottom: `1px solid ${T.line}` }}>
-            <div>
-              <h1 style={{ fontFamily: "Fraunces, serif", fontSize: 22, color: T.titre }}>{NAV.find((n) => n.key === vue)?.label}</h1>
-              {posteActif && <p className="text-xs mt-0.5" style={{ color: "rgba(18,42,32,0.45)" }}>{posteActif.salon_nom}</p>}
+          <header className="flex items-center justify-between gap-3 px-4 sm:px-6 py-4" style={{ borderBottom: `1px solid ${T.line}` }}>
+            <div className="flex items-center gap-3 min-w-0">
+              <button className="lg:hidden shrink-0 p-1" onClick={() => setSidebarOuvert(true)} aria-label="Ouvrir le menu">
+                <Menu size={22} style={{ color: T.titre }} />
+              </button>
+              <div className="min-w-0">
+                <h1 className="truncate" style={{ fontFamily: "Fraunces, serif", fontSize: 22, color: T.titre }}>{NAV.find((n) => n.key === vue)?.label}</h1>
+                {posteActif && <p className="text-xs mt-0.5 truncate" style={{ color: "rgba(18,42,32,0.45)" }}>{posteActif.salon_nom}</p>}
+              </div>
             </div>
             <UserMenu />
           </header>
-          <main className="flex-1 overflow-auto p-6">
+          <main className="flex-1 overflow-auto p-4 sm:p-6">
             {!posteActif ? (
               <p style={{ color: "rgba(18,42,32,0.5)" }}>Aucun poste actif trouvé. Contactez le gestionnaire de votre salon.</p>
             ) : (
